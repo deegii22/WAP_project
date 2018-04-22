@@ -4,6 +4,9 @@
 .tab-content {
     padding-top: 20px;
 }
+.logo {
+    margin-right: 30px;
+}
 .add-event {
     display: none;
     padding: 20px;
