@@ -9,6 +9,7 @@
 <html>
 <head>
     <title>Cycling Club Applicaton</title>
+    <link rel="icon" type="image/png" href="resources/images/favicon.ico">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="resources/css/custom.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
