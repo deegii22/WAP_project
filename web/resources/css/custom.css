@@ -4,3 +4,7 @@
 .tab-content {
     padding-top: 20px;
 }
+.add-event {
+    display: none;
+    padding: 20px;
+}
