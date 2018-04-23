@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `Event` (
     `start_date` DATETIME,
 	`end_date` DATETIME,
     `route_img` VARCHAR(255),
-	`owner_id` BIGINT
+	`owner_id` BIGINT,
 	`emergency_flag` INT,
 	`emergency_info` NVARCHAR(1000),
 	`created` DATETIME,
