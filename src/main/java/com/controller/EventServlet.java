@@ -3,6 +3,9 @@ package com.controller;
 import com.model.Event;
 import com.service.DBService;
 import com.service.Result;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -48,15 +51,16 @@ public class EventServlet extends HttpServlet {
             event.setName(name);
             event.setStartDate(start);
             event.setEndDate(end);
+            JSONParser parser = new JSONParser();
+            JSONArray json = (JSONArray) parser.parse(route);
+            for(int i=0;i< json.size();i++){
+                String s1 = (String) ((JSONObject) json.get(0)).get("startPosition");
+                String s2 = (String)((JSONObject) json.get(0)).get("endPosition");
+                String s3 = (String)((JSONObject) json.get(0)).get("duration");
+            }
+
             DBService db = new DBService();
             return db.AddEvent(event);
-            //String jsonData = readFile("properties.json");
-            //JSONObject jobj = new JSONObject(jsonData);
-            //JSONArray jarr = new JSONArray(jobj.getJSONArray("keywords").toString());
-            //System.out.println("Name: " + jobj.getString("name"));
-            //for(int i = 0; i < jarr.length(); i++) {
-            //    System.out.println("Keyword: " + jarr.getString(i));
-            //}
         }
         catch (Exception ex){
             return new Result(ex.getMessage(), null);
