@@ -106,9 +106,9 @@ public class DBService {
         String ret = "[]";
         try {
             if (!isActive) {
-                preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ?");
+                preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ? order by priority");
             } else {
-                preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ? and status = 0");
+                preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ? and status = 0  order by priority");
             }
             preparedStatement.setInt(1, eventId);
             resultSet = preparedStatement.executeQuery();
