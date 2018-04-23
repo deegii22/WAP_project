@@ -22,7 +22,9 @@ public class EventServlet extends HttpServlet {
             String action = request.getParameter("action");
             switch (action) {
                 case "add":
-                    addEvent(request);
+                    Result res = addEvent(request);
+                    out.print(res.getDesc());
+                    break;
             }
         }
         catch (Exception ex) {
@@ -33,7 +35,7 @@ public class EventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
     }
-    private void addEvent(HttpServletRequest request)
+    private Result addEvent(HttpServletRequest request)
     {
         try {
             String eventName = request.getParameter("eventName");
@@ -47,7 +49,7 @@ public class EventServlet extends HttpServlet {
             event.setStartDate(start);
             event.setEndDate(end);
             DBService db = new DBService();
-            Result res = db.AddEvent(event);
+            return db.AddEvent(event);
             //String jsonData = readFile("properties.json");
             //JSONObject jobj = new JSONObject(jsonData);
             //JSONArray jarr = new JSONArray(jobj.getJSONArray("keywords").toString());
@@ -57,7 +59,7 @@ public class EventServlet extends HttpServlet {
             //}
         }
         catch (Exception ex){
-            
+            return new Result(ex.getMessage(), null);
         }
     }
 }
