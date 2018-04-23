@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `User` (
 	`sex` VARCHAR(100),
 	`birth_date` VARCHAR(100),
     `created` DATETIME,
-	PRIMARY KEY (`user_id`),
+	PRIMARY KEY (`user_id`)
 ) ENGINE MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 
@@ -20,16 +20,17 @@ CREATE TABLE IF NOT EXISTS `Event` (
     `status` INT,
     `start_date` DATETIME,
 	`end_date` DATETIME,
+    `route_img` VARCHAR(255),
 	`emergency_flag` INT,
 	`emergency_info` NVARCHAR(1000),
 	`created` DATETIME,
-	PRIMARY KEY (`event_id`),
+	PRIMARY KEY (`event_id`)
 ) ENGINE MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `Event_member` (
 	`event_id` BIGINT,
 	`user_id` BIGINT,
-	PRIMARY KEY (`event_id`, `user_id`),
+	PRIMARY KEY (`event_id`, `user_id`)
 ) ENGINE MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE IF NOT EXISTS `Event_route` (
@@ -37,7 +38,5 @@ CREATE TABLE IF NOT EXISTS `Event_route` (
 	`start_position` VARCHAR(255),
 	`end_position` VARCHAR(255),
 	`priority` INT,
-	`duration` INT,
-	`route_img` VARCHAR(255)
-	PRIMARY KEY (`event_id`, `user_id`),
+	`duration` INT	
 ) ENGINE MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
