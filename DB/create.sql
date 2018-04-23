@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS `Event` (
     `start_date` DATETIME,
 	`end_date` DATETIME,
     `route_img` VARCHAR(255),
+	`owner_id` BIGINT
 	`emergency_flag` INT,
 	`emergency_info` NVARCHAR(1000),
 	`created` DATETIME,
@@ -37,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `Event_route` (
 	`event_id` BIGINT,
 	`start_position` VARCHAR(255),
 	`end_position` VARCHAR(255),
+	`status` INT,
 	`priority` INT,
 	`duration` INT	
 ) ENGINE MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
