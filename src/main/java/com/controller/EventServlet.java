@@ -42,8 +42,8 @@ public class EventServlet extends HttpServlet {
             int ownerID = 1;    //session-s awna.
             String name = request.getParameter("eventName");
             String route = request.getParameter("route");
-            Date start = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("start"));
-            Date end = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("end"));
+            Date start = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("start"));
+            Date end = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("end"));
             Event event = new Event();
             event.setName(name);
             event.setStartDate(start);
