@@ -42,12 +42,13 @@ public class EventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         PrintWriter out = response.getWriter();
+        long userId = (long) request.getSession().getAttribute("user");
         switch (action) {
             case "upcomingList":
-                out.print(eventList(0));
+                out.print(eventList(0, userId));
                 break;
             case "ongoingList":
-                out.print(eventList(1));
+                out.print(eventList(1, userId));
                 break;
             default:
                 break;
@@ -80,7 +81,7 @@ public class EventServlet extends HttpServlet {
         }
     }
 
-    private String eventList(int type) {
+    private String eventList(int type, long userId) {
         DBService db = new DBService();
         return db.eventList(type);
     }
