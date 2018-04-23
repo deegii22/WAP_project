@@ -30,10 +30,9 @@ public class DBService {
     }
 
     public Result AddEvent(Event event) {
-
-        sql = "insert into event values (1, 'event1', 0, STR_TO_DATE('1-01-2012', '%d-%m-%Y')," +
-                "STR_TO_DATE('1-01-2012', '%d-%m-%Y'),'asdf',1,0," +
-                "'test',STR_TO_DATE('1-01-2012', '%d-%m-%Y'));";
+        conn = connectDB();
+        sql = "insert into Event (name, status, start_date, end_date, route_img, owner_id, emergency_flag, emergency_info, created)\n" +
+                "values ('"+event.getName()+"', 0, STR_TO_DATE('25-04-2018', '%d-%m-%Y'), STR_TO_DATE('26-04-2018', '%d-%m-%Y'), '', 1, 0, '', sysdate());";
 
         try {
 

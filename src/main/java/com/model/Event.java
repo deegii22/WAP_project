@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class Event implements Serializable {
+    private long eventID;
     private String name;
     private int status;
     private String route;
@@ -14,6 +15,14 @@ public class Event implements Serializable {
     private int eFlag;
     private String eInfo;
     private Date created;
+
+    public long getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(long eventID) {
+        this.eventID = eventID;
+    }
 
     public String getName() {
         return name;

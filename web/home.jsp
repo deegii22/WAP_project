@@ -21,8 +21,11 @@
               <a class="btn btn-danger btn-lg" href="#" role="button" id="alertEvent">Red Box</a>
           </p>
           <div class="add-event">
-              <label for="eventName">Event name:</label>
-              <input type="text" id="eventName" class="form-control"/>
+            <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>
+            <input type="text" id="route" name="route" placeholder="Route" class="form-control"/>
+            <input type="text" id="start" name="start" placeholder="Start Datetime" class="form-control"/>
+            <input type="text" id="end" name="end" placeholder="End Datetime" class="form-control"/>
+            <input type="submit" id="btnAddEvent" value="Save"/>
           </div>
           <div class="alert alert-danger" role="alert">
               Event name:<br/>
