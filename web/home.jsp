@@ -18,18 +18,23 @@
           <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
           <p class="lead">
               <a class="btn btn-primary btn-lg" href="#" role="button" id="addEvent">Add Event</a>
+              <a class="btn btn-danger btn-lg" href="#" role="button" id="alertEvent">Red Box</a>
           </p>
           <div class="add-event">
               <label for="eventName">Event name:</label>
               <input type="text" id="eventName" class="form-control"/>
           </div>
+          <div class="alert alert-danger" role="alert">
+              Event name:<br/>
+              Ride participants:<br/>
+              Current location:
+          </div>
       </div>
-    <a href="" class="btn btn-danger">Red Box</a>
   </div>
   <div class="content">
     <ul class="nav nav-tabs">
       <li class="active"><a class="nav-link active" data-toggle="tab" href="#upcoming">Upcoming rides</a></li>
-      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#ongoing">"Live Cycling Rides</a></li>
+      <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#ongoing">Live Cycling Rides</a></li>
       <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#members">Members</a></li>
     </ul>
 
