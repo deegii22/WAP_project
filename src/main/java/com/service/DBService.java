@@ -1,7 +1,6 @@
 package com.service;
 
 import com.model.Event;
-import javafx.scene.control.Alert;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,8 +11,6 @@ public class DBService {
     static Connection conn = null;
     static Statement stmt = null;
     String sql;
-    Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-
 
     public static Connection connectDB() {
         try {
