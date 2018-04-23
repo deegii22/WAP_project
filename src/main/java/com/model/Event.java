@@ -1,6 +1,7 @@
 package com.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Event implements Serializable {
@@ -15,6 +16,7 @@ public class Event implements Serializable {
     private int eFlag;
     private String eInfo;
     private Date created;
+    private ArrayList<EventRoute> routes = null;
 
     public long getEventID() {
         return eventID;
@@ -102,5 +104,14 @@ public class Event implements Serializable {
 
     public void setCreated(Date created) {
         this.created = created;
+    }
+
+    public void addRoute(EventRoute route){
+        if(routes == null)
+            routes = new ArrayList<EventRoute>();
+        routes.add(route);
+    }
+    public ArrayList<EventRoute> getRoutes(){
+        return routes;
     }
 }

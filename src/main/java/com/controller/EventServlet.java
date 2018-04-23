@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.model.Event;
+import com.model.EventRoute;
 import com.service.DBService;
 import com.service.Result;
 import org.json.simple.JSONArray;
@@ -72,9 +73,12 @@ public class EventServlet extends HttpServlet {
             JSONParser parser = new JSONParser();
             JSONArray json = (JSONArray) parser.parse(route);
             for(int i=0;i< json.size();i++){
-                String s1 = (String) ((JSONObject) json.get(0)).get("startPosition");
-                String s2 = (String)((JSONObject) json.get(0)).get("endPosition");
-                String s3 = (String)((JSONObject) json.get(0)).get("duration");
+                EventRoute eRoute = new EventRoute();
+                eRoute.setPriority(i);
+                eRoute.setStartPosition((String) ((JSONObject) json.get(0)).get("startPosition"));
+                eRoute.setEndPosition((String)((JSONObject) json.get(0)).get("endPosition"));
+                eRoute.setDuration(Integer.parseInt((String) ((JSONObject) json.get(0)).get("duration")));
+                event.addRoute(eRoute);
             }
 
             DBService db = new DBService();
