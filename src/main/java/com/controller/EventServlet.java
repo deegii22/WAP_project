@@ -28,6 +28,9 @@ public class EventServlet extends HttpServlet {
                     out.print(res.getDesc());
                     addEvent(request);
                     break;
+                case "startEvent":
+                    startEvent(1);
+                    break;
                 default:
                     break;
             }
@@ -50,8 +53,8 @@ public class EventServlet extends HttpServlet {
                 break;
         }
     }
-    private Result addEvent(HttpServletRequest request)
-    {
+
+    private Result addEvent(HttpServletRequest request) {
         try {
             String eventName = request.getParameter("eventName");
             int ownerID = 1;    //session-s awna.
@@ -72,8 +75,7 @@ public class EventServlet extends HttpServlet {
             //for(int i = 0; i < jarr.length(); i++) {
             //    System.out.println("Keyword: " + jarr.getString(i));
             //}
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
         }
     }
@@ -81,5 +83,9 @@ public class EventServlet extends HttpServlet {
     private String eventList(int type) {
         DBService db = new DBService();
         return db.eventList(type);
+    }
+
+    private void startEvent(int eventId) {
+
     }
 }

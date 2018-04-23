@@ -5,6 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.model.Event;
+import com.model.EventRoute;
+
 import java.sql.*;
 import java.util.*;
 
@@ -77,6 +79,74 @@ public class DBService {
             ret = jsonArray.toString();
         } catch (Exception e) {
             ret = "[]";
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return ret;
+    }
+
+    public String routList(int eventId, Boolean isActive) {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String ret = "[]";
+        try {
+            if (!isActive) {
+                preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ?");
+            } else {
+                preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ? and status = 0");
+            }
+            preparedStatement.setInt(1, eventId);
+            resultSet = preparedStatement.executeQuery();
+            List<EventRoute> routes = new ArrayList();
+            while (resultSet.next()) {
+                EventRoute route = new EventRoute();
+                route.setEventID(resultSet.getInt("event_id"));
+                route.setStartPosition(resultSet.getString("start_position"));
+                route.setEndPosition(resultSet.getString("end_position"));
+                route.setStatus(resultSet.getInt("status"));
+                route.setPriority(resultSet.getInt("priority"));
+                route.setDuration(resultSet.getInt("duration"));
+                routes.add(route);
+            }
+            //https://github.com/google/gson
+            Gson gson = new Gson();
+            JsonElement element = gson.toJsonTree(routes, new TypeToken<List<Event>>() {
+            }.getType());
+            JsonArray jsonArray = element.getAsJsonArray();
+            ret = jsonArray.toString();
+        } catch (Exception e) {
+            ret = "[]";
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return ret;
     }
