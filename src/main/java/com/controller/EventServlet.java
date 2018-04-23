@@ -19,12 +19,33 @@ public class EventServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         try {
+            String action = request.getParameter("action");
+            switch (action) {
+                case "add":
+                    addEvent(request);
+            }
+        }
+        catch (Exception ex) {
+            out.print("Sdarara");
+        }
+    }
+
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    }
+    private void addEvent(HttpServletRequest request)
+    {
+        try {
             String eventName = request.getParameter("eventName");
             int ownerID = 1;    //session-s awna.
+            String name = request.getParameter("eventName");
             String route = request.getParameter("route");
             Date start = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("start"));
             Date end = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("end"));
-            Event event = new Event(1,eventName, ownerID, route, start, end);
+            Event event = new Event();
+            event.setName(name);
+            event.setStartDate(start);
+            event.setEndDate(end);
             DBService db = new DBService();
             Result res = db.AddEvent(event);
             //String jsonData = readFile("properties.json");
@@ -35,12 +56,8 @@ public class EventServlet extends HttpServlet {
             //    System.out.println("Keyword: " + jarr.getString(i));
             //}
         }
-        catch (Exception ex) {
-            out.print("Sdarara");
+        catch (Exception ex){
+            
         }
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
     }
 }

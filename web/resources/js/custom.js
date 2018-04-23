@@ -6,6 +6,15 @@ $(function (){
     $('#alertEvent').click(function () {
         $('.alert').toggle();
     });
+    $("#btnAddEvent").click(function(){
+        $.ajax({
+            url: '/Event?action=add',
+            method:"POST",
+            data:{eventName: $('#eventName').val(), route:$('#route').val(), start:$('#start').val(), end:$('#end').val()}
+        }).done(function(data) {
+            alert(data);
+        });
+    });
 });
 
 
