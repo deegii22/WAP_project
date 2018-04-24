@@ -401,11 +401,11 @@ public class DBService {
         return objectToReturn;
     }
 
-    public Result login(User User) {
+    public Result login(User user) {
         sql = "select * from User where email= ? ";
         try {
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setString(1, User.getEmail());
+            st.setString(1, user.getEmail());
             ResultSet rs = st.executeQuery();
 
             User res = new User();
@@ -436,27 +436,15 @@ public class DBService {
     }
 
 
-    public Result addUser(User User) {
+    public Result addUser(User user) {
         String existCheckSQL = "select name from User where email= ?";
 
-<<<<<<< HEAD
-        sql = "insert into User (name, email, password, phone, sex, birth_date, created)" +
-                " values ("
-                + "'" + User.getName() + "'"
-                + ", '" + User.getEmail() + "'"
-                + ", '" + User.getPassword() + "'"
-                + ", '" + User.getPhone() + "'"
-                + ", '" + User.getSex() + "'"
-                + ", '" + User.getBirthday() + "'"
-                + ", now())";
-=======
         sql = "insert into user (name, email, password, phone, sex, birth_date, created)" +
                 " values (?,?,?,?,?,?, now())";
->>>>>>> 0bdd2c6c44fa6ae664da26b12ae6b1449ee71d04
 
         try {
             PreparedStatement st = conn.prepareStatement(existCheckSQL);
-            st.setString(1, User.getEmail());
+            st.setString(1, user.getEmail());
             ResultSet result = st.executeQuery();
 
             if (result.next()) {
