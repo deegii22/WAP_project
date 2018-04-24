@@ -10,10 +10,6 @@ import com.model.Event;
 import com.model.EventRoute;
 import com.service.DBService;
 import com.service.Result;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,11 +21,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 
 @WebServlet("/Event")
 @MultipartConfig
@@ -153,9 +147,8 @@ public class EventServlet extends HttpServlet {
         return "";
     }
     public String uploadFile(Part filePart) throws IOException {
-        DateTimeFormatter dtf = DateTimeFormat.forPattern("-YYYY-MM-dd-HHmmssSSS");
-        DateTime dt = DateTime.now(DateTimeZone.UTC);
-        String dtString = dt.toString(dtf);
+        LocalDateTime dt = LocalDateTime.now();
+        String dtString = dt.toString();
         final String fileName =  dtString + filePart.getSubmittedFileName();
         BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJTPJNGONK2H3N74Q", "skofv8UdMWcxm7PvyDsJztrtCXxUpjqGrKs2wFuR");
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
