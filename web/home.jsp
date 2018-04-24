@@ -21,11 +21,19 @@
               <a class="btn btn-danger btn-lg" href="#" role="button" id="alertEvent">Red Box</a>
           </p>
           <div class="add-event">
-            <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>
-            <input type="text" id="route" name="route" placeholder="Route" class="form-control"/>
-            <input type="text" id="start" name="start" placeholder="Start Datetime" class="form-control"/>
-            <input type="text" id="end" name="end" placeholder="End Datetime" class="form-control"/>
-            <input type="submit" id="btnAddEvent" value="Save"/>
+              <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>
+              <input type="text" id="route" name="route" placeholder="Route" class="form-control"/>
+              <input type="date" id="start" name="start" placeholder="Start Datetime" class="form-control"/>
+              <input type="date" id="end" name="end" placeholder="End Datetime" class="form-control"/>
+              <div>
+                  <input type="text" id="startPosition" name="startPosition" placeholder="Start" class="form-control"/>
+                  <input type="text" id="endPosition" name="endPosition" placeholder="End" class="form-control"/>
+                  <input type="text" id="duration" name="duration" placeholder="Duration" class="form-control"/>
+                  <input type="submit" id="btnAddRoute" value="Save route"/>
+                  <div id="dynamicTable">
+                  </div>
+              </div>
+              <input type="submit" id="btnAddEvent" value="Save event"/>
           </div>
           <div class="alert alert-danger" role="alert">
               Event name:<br/>

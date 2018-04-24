@@ -22,6 +22,7 @@ public class DBSingleton {
     }
 
     public Connection getConnection() throws SQLException, ClassNotFoundException {
+        Class.forName("com.mysql.jdbc.Driver");
         Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/cycling_club","root","root");
         return connection;
     }

@@ -1,6 +1,7 @@
 "use strict";
 
 $(function (){
+    var arrRoute = [];
     $('#addEvent').click(function () {
         $('.add-event').toggle();
     });
@@ -35,20 +36,50 @@ $(function (){
         }
     });
 
+    $.ajax({
+        "url": "/Event?action=upcomingList",
+        "type": "GET",
+        "success": eventUpcomingList
+    });
+
     $("#btnAddEvent").click(function(){
         $.ajax({
             url: '/Event?action=add',
             method:"POST",
-            data:{eventName: $('#eventName').val(), route:$('#route').val(), start:$('#start').val(), end:$('#end').val()}
+            data:{name:  $('#eventName').val(), routeImg:$('#routeImg').val(), start:$('#start').val(), end: $('#end').val(), route: JSON.stringify(arrRoute)}
         }).done(function(data) {
             alert(data);
         });
     });
 
-    $.ajax({
-        "url": "/Event?action=upcomingList",
-        "type": "GET",
-        "success": eventUpcomingList
+    $("#btnAddRoute").click(function(){
+        arrRoute.push({
+            startPosition: $("#startPosition").val(),
+            endPosition: $("#endPosition").val(),
+            duration: $("#duration").val()
+        })
+        var table = $("<table/>");
+        var thead = $("<thead/>");
+        var tr = $("<tr/>");
+        tr.append($("<th/>").text("Start position"));
+        tr.append($("<th/>").text("End position"));
+        tr.append($("<th/>").text("Duration"));
+        thead.append(tr);
+        table.append(thead);
+        var tbody = $("<tbody/>");
+        for(var i=0; i<arrRoute.length; i++){
+            tr = $("<tr/>");
+            tr.append($("<td/>").text(arrRoute[i].startPosition));
+            tr.append($("<td/>").text(arrRoute[i].endPosition));
+            tr.append($("<td/>").text(arrRoute[i].duration));
+            tbody.append(tr);
+            table.append(tbody);
+        }
+        $("#dynamicTable").empty();
+        $("#dynamicTable").append(table);
+        $("#startPosition").val("");
+        $("#endPosition").val("");
+        $("#duration").val("");
     });
 });
 
