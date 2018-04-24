@@ -278,16 +278,16 @@ public class DBService {
         return ret;
     }
 
-    public Result login(User user) {
-        sql = "select * from user where email= ? ";
+    public Result login(User User) {
+        sql = "select * from User where email= ? ";
         try {
             PreparedStatement st = conn.prepareStatement(sql);
-            st.setString(1, user.getEmail());
+            st.setString(1, User.getEmail());
             ResultSet rs = st.executeQuery();
 
             User res = new User();
             while (rs.next()) {
-                res.setId(rs.getLong("user_id"));
+                res.setId(rs.getLong("User_id"));
                 res.setName(rs.getString("name"));
                 res.setEmail(rs.getString("email"));
                 res.setPassword(rs.getString("password"));
@@ -297,37 +297,37 @@ public class DBService {
 
                 String pwd = rs.getString("password");
 
-                if (pwd.equals(user.getPassword())) {
+                if (pwd.equals(User.getPassword())) {
                     return new Result("", res);
                 } else
-                    return new Result("Invalid username or password", null);
+                    return new Result("Invalid Username or password", null);
 
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            return new Result("Invalid username or password", null);
+            return new Result("Invalid Username or password", null);
         }
-        return new Result("Invalid username or password", null);
+        return new Result("Invalid Username or password", null);
     }
 
 
-    public Result addUser(User user) {
-        String existCheckSQL = "select name from user where email= ?";
+    public Result addUser(User User) {
+        String existCheckSQL = "select name from User where email= ?";
 
-        sql = "insert into user (name, email, password, phone, sex, birth_date, created)" +
+        sql = "insert into User (name, email, password, phone, sex, birth_date, created)" +
                 " values ("
-                + "'" + user.getName() + "'"
-                + ", '" + user.getEmail() + "'"
-                + ", '" + user.getPassword() + "'"
-                + ", '" + user.getPhone() + "'"
-                + ", '" + user.getSex() + "'"
-                + ", '" + user.getBirthday() + "'"
+                + "'" + User.getName() + "'"
+                + ", '" + User.getEmail() + "'"
+                + ", '" + User.getPassword() + "'"
+                + ", '" + User.getPhone() + "'"
+                + ", '" + User.getSex() + "'"
+                + ", '" + User.getBirthday() + "'"
                 + ", now())";
 
         try {
             PreparedStatement st = conn.prepareStatement(existCheckSQL);
-            st.setString(1, user.getEmail());
+            st.setString(1, User.getEmail());
             ResultSet result = st.executeQuery();
 
             if (result.next()) {
