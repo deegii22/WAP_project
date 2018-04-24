@@ -11,7 +11,18 @@
 <body>
 
     <h1>Sign Up</h1>
-    <br target="" method="post">
+    <p>
+        <%
+            String errorMessage = (String)request.getAttribute("signupError");
+            if(errorMessage != null){
+                out.print(errorMessage);
+            }else{
+                String success = (String)request.getAttribute("signupSuccess");
+                if(success != null) out.print(success);
+            }
+        %>
+    </p>
+    <form action="Signup" method="post">
         <label for="name">Name: </label>
         <input type="text" name="name" id="name" placeholder="Firstname" pattern="[a-zA-Z]{1,30}" title="Please input your name!"/></br>
 
@@ -21,8 +32,8 @@
             <option value="Female">Female</option>
         </select><br>
 
-        <label for="mail">Email: </label>
-        <input type="email" name="mail" id="mail" placeholder="Email" pattern="[\w]{3,15}@[\w]{2,10}.[a-zA-Z]{2,8}" title="Please input correct format email!" required /></br>
+        <label for="email">Email: </label>
+        <input type="email" name="email" id="email" placeholder="Email" pattern="[\w]{3,15}@[\w]{2,10}.[a-zA-Z]{2,8}" title="Please input correct format email!" required /></br>
 
         <label for="pwd1">Password: </label>
         <input type="password" name="pwd1" id="pwd1" placeholder="Password" required/></br>
@@ -31,12 +42,12 @@
         <input type="password" name="pwd2" id="pwd2" placeholder="Renter Password" required/></br>
 
         <label for="phone">Phone: </label>
-        <input type="text" name="phone" id="phone" placeholder="Phone" required/></br>
+        <input type="text" name="phone" id="phone" placeholder="Phone" pattern="[\d]{10}" title="The phone number must be 10 digits number." required/></br>
 
         <label for="bday">Birthday: </label>
-        <input type="date" name="phone" id="bday" placeholder="Please input birthday!" required/></br>
+        <input type="date" name="bday" id="bday" placeholder="Please input birthday!" required/></br>
 
-        <button id="login" onclick="showloginPage()">Login</button>
+        <a href="login.jsp">Login</a>
         <button type="submit" id="signup">Sign Up</button>
     </form>
 
