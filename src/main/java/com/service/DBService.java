@@ -147,18 +147,18 @@ public class DBService {
             preparedStatement = conn.prepareStatement("select * from Event where event_id = ?");
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
-
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
             while (resultSet.next()) {
                 obj.put("eventId", resultSet.getInt("event_id"));
                 obj.put("name", resultSet.getString("name"));
                 obj.put("status", resultSet.getInt("status"));
-                obj.put("startDate", "");
-                obj.put("endDate", "");
+                obj.put("startDate", resultSet.getTimestamp("start_date").toLocalDateTime().format(formatter));
+                obj.put("endDate", resultSet.getTimestamp("end_date").toLocalDateTime().format(formatter));
                 obj.put("ownerId", resultSet.getInt("owner_id"));
                 obj.put("img", resultSet.getString("route_img"));
                 obj.put("emergencyFlag", resultSet.getString("emergency_info"));
                 obj.put("emergencyInfo", "");
-                obj.put("created", "");
+                obj.put("created", resultSet.getTimestamp("created").toLocalDateTime().format(formatter));
             }
 
             return obj;
