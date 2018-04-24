@@ -21,6 +21,8 @@ import java.util.Date;
 
 @WebServlet("/Event")
 public class EventServlet extends HttpServlet {
+    DBService db = new DBService();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
         try {
@@ -50,13 +52,17 @@ public class EventServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         /*long userId = (long) request.getSession().getAttribute("user");*/
-        long userId = 1;
+
         switch (action) {
             case "upcomingList":
-                out.print(eventList(0, userId));
+                out.print(Arrays.toString(db.eventList(0)));
                 break;
             case "ongoingList":
-                out.print(eventList(1, userId));
+                out.print(Arrays.toString(db.eventList(1)));
+                break;
+            case "get":
+                int id = Integer.parseInt(request.getParameter("id"));
+                out.print(db.getEvent(id));
                 break;
             default:
                 break;
@@ -87,16 +93,10 @@ public class EventServlet extends HttpServlet {
                 event.addRoute(eRoute);
             }
 
-            DBService db = new DBService();
             return db.AddEvent(event);
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
         }
-    }
-
-    private String eventList(int type, long userId) {
-        DBService db = new DBService();
-        return Arrays.toString(db.eventList(type));
     }
 
     private void startEvent(int eventId) {

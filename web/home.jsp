@@ -58,7 +58,7 @@
     <div class="tab-content">
       <div id="upcoming" class="tab-pane fade show active">
         <div class="card-columns" id="columns">
-          <%--<div class="card">
+          <div class="card">
             <img class="card-img-top" src="resources/images/245.svg" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title">Card title that wraps to a new line<span class="badge badge-secondary">New</span></h5>
@@ -84,7 +84,7 @@
               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
               <a href="#" class="card-link">Card link</a>
             </div>
-          </div>--%>
+          </div>
           <div class="card bg-primary text-white text-center p-3">
             <blockquote class="blockquote mb-0">
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat.</p>
@@ -95,7 +95,7 @@
               </footer>
             </blockquote>
           </div>
-          <%--<div class="card text-center">
+          <div class="card text-center">
             <div class="card-body">
               <h5 class="card-title">Card title<span class="badge badge-secondary">New</span></h5>
               <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
@@ -121,61 +121,11 @@
               <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
             </div>
-          </div>--%>
+          </div>
         </div>
       </div>
       <div id="ongoing" class="tab-pane fade">
-        <div id="accordion2">
-          <div class="card">
-            <div class="card-header" id="headingOne1">
-              <h5 class="mb-0">
-                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne1">
-                  Collapsible Group Item #1
-                </button>
-              </h5>
-            </div>
-
-            <div id="collapseOne1" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion2">
-              <div class="card-body">
-                <button class="btn btn-secondary float-right">Join a ride</button>
-                  <div class="progress">
-                      <div class="progress-bar progress-bar-striped bg-info" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                  </div>
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header" id="headingTwo2">
-              <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
-                  Collapsible Group Item #2
-                </button>
-              </h5>
-            </div>
-            <div id="collapseTwo2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion2">
-              <div class="card-body">
-                <button class="btn btn-secondary float-right">Join a ride</button>
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header" id="headingThree2">
-              <h5 class="mb-0">
-                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree2" aria-expanded="false" aria-controls="collapseThree2">
-                  Collapsible Group Item #3
-                </button>
-              </h5>
-            </div>
-            <div id="collapseThree2" class="collapse" aria-labelledby="headingThree" data-parent="#accordion2">
-              <div class="card-body">
-                <button class="btn btn-secondary float-right">Join a ride</button>
-                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-              </div>
-            </div>
-          </div>
-        </div>
+          <div class="card-columns" id="columns1"></div>
       </div>
       <div id="members" class="tab-pane fade">
         <div id="accordion3">
@@ -230,6 +180,25 @@
     </div>
 
   </div>
+</div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Join a ride</button>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

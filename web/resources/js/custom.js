@@ -1,7 +1,23 @@
 "use strict";
 
 $(function (){
+
+    $.ajax({
+        url: "/Event?action=upcomingList",
+        type: "GET",
+        success: upcomingList,
+        error: failureFunction
+    });
+
+    $.ajax({
+        url: "/Event?action=ongoingList",
+        type: "GET",
+        success: ongoingList,
+        error: failureFunction
+    });
+
     var arrRoute = [];
+
     $('#addEvent').click(function () {
         $('.add-event').toggle();
     });
@@ -10,37 +26,38 @@ $(function (){
         $('.alert').toggle();
     });
 
-    $.ajax({
-        "url": "/Event?action=upcomingList",
-        "type": "GET",
-        "success": upcomingList,
-        "error": failureFunction
-    });
-    /*$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-        var target = $(e.target).attr("href");
-        switch (target){
-            case "#ongoing":
-                $.ajax({
-                    "url": "/Event?action=ongoingList",
-                    "type": "GET",
-                    "success": ongoingList
-                });
-                break;
-            case "#members":
-                $.ajax({
-                    "url": "/Event?action=membersList",
-                    "type": "GET",
-                    "success": membersList
-                });
-                break;
-            default :
-                $.ajax({
-                    "url": "/Event?action=upcomingList",
-                    "type": "GET",
-                    "success": upcomingList
-                });
-        }
-    });*/
+    $('#exampleModalCenter').on('shown.bs.modal', getEvent);
+
+    $('#exampleModalCenter').on('hidden.bs.modal', hideEvent);
+
+
+/*Added by deegii, tab change event*/
+    /*    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            switch (target){
+                case "#ongoing":
+                    $.ajax({
+                        "url": "/Event?action=ongoingList",
+                        "type": "GET",
+                        "success": ongoingList
+                    });
+                    break;
+                case "#members":
+                    $.ajax({
+                        "url": "/Event?action=membersList",
+                        "type": "GET",
+                        "success": membersList
+                    });
+                    break;
+                default :
+                    $.ajax({
+                        "url": "/Event?action=upcomingList",
+                        "type": "GET",
+                        "success": upcomingList
+                    });
+            }
+        });
+    */
 
     $("#btnAddEvent").click(function(){
         $.ajax({
@@ -102,17 +119,48 @@ function upcomingList(data) {
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
         $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
-        $('<div>').attr({ 'class': "card-text" }).text(data[item].startDate).appendTo('#card-body' + data[item].eventId);
-        $('<div>').attr({ 'class': "card-text" }).text(data[item].endDate).appendTo('#card-body' + data[item].eventId);
-        $('<a>').attr({ 'class': "card-link", 'href':'/Event?action=get?id=' + data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
+        $('<p>').attr({ 'class': "card-text" }).text("Start date: " + "2018-4-22").appendTo('#card-body' + data[item].eventId);
+        $('<p>').attr({ 'class': "card-text" }).text("End date: " + "2018-4-23").appendTo('#card-body' + data[item].eventId);
+        $('<p>').attr({ 'class': "card-text","id":"card-text" + data[item].eventId}).appendTo('#card-body' + data[item].eventId);
+        $('<small>').attr({ 'class': "text-muted" }).text("Last updated 3 mins ago").appendTo('#card-text' + data[item].eventId);
+        $('<a>').attr({ 'class': "card-link", 'href':'#','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
     }
 }
 
 /*Added by deegii, ongoing event list*/
 function ongoingList(data) {
-    console.log("ongoing");
+    for (let item in data) {
+        $('<div>').attr({ 'class': "card","id": "card" + data[item].eventId }).appendTo('#columns1');
+        if(data[item].img != ""){
+            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('.card');
+        }
+        $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
+        $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
+        $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
+        $('<div>').attr({ 'class': "card-text" }).text(data[item].startDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({ 'class': "card-text" }).text(data[item].endDate).appendTo('#card-body' + data[item].eventId);
+        $('<a>').attr({ 'class': "card-link", 'data-toggle':'modal','data-target':'#exampleModalCenter','href':'/Event?action=get?id=' + data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
+    }
 }
 
 function failureFunction() {
     console.log("Couldn't load ajax");
+}
+
+/*Added by deegii, show event description in the modal*/
+function getEvent(e) {
+    var id = e.relatedTarget.attributes.getNamedItem('data-eventId').value;
+    $.ajax({
+        url: '/Event?action=get&id=' + id,
+        type:"GET",
+        success: function(data){
+            $('#exampleModalLongTitle').append(data.name);
+            $('.modal-body').append(data.startDate + '<br/>' + data.endDate);
+        },
+    });
+}
+
+function hideEvent() {
+    $('#exampleModalLongTitle').empty()
+    $('.modal-body').empty()
 }

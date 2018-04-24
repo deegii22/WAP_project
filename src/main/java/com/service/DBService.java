@@ -62,7 +62,6 @@ public class DBService {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String ret = "[]";
         JSONObject[] objectToReturn = new JSONObject[1];
         try {
             preparedStatement = conn.prepareStatement("select * from Event where status = ?");
@@ -129,6 +128,54 @@ public class DBService {
             }
         }
         return objectToReturn;
+    }
+
+    /*Added by deegii, show event description*/
+    public JSONObject getEvent(int id) {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        JSONObject obj = new JSONObject();
+
+        try {
+            preparedStatement = conn.prepareStatement("select * from Event where event_id = ?");
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()){
+                obj.put("eventId", resultSet.getInt("event_id"));
+                obj.put("name", resultSet.getString("name"));
+                obj.put("status", resultSet.getInt("status"));
+                obj.put("startDate", "");
+                obj.put("endDate", "");
+                obj.put("ownerId", resultSet.getInt("owner_id"));
+                obj.put("img", resultSet.getString("route_img"));
+                obj.put("emergencyFlag", resultSet.getString("emergency_info"));
+                obj.put("emergencyInfo", "");
+                obj.put("created", "");
+            }
+
+            return obj;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return obj;
     }
 
     public String routList(int eventId, Boolean isActive) {
