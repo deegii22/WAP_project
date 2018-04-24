@@ -1,6 +1,6 @@
 <%--
   Created by IntelliJ IDEA.
-  User: Administrator
+  User: deegii
   Date: 4/21/2018
   Time: 2:02 PM
   To change this template use File | Settings | File Templates.
@@ -43,8 +43,8 @@
 
     <div class="tab-content">
       <div id="upcoming" class="tab-pane fade show active">
-        <div class="card-columns">
-          <div class="card">
+        <div class="card-columns" id="columns">
+          <%--<div class="card">
             <img class="card-img-top" src="resources/images/245.svg" alt="Card image cap">
             <div class="card-body">
                 <h5 class="card-title">Card title that wraps to a new line<span class="badge badge-secondary">New</span></h5>
@@ -70,7 +70,7 @@
               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
               <a href="#" class="card-link">Card link</a>
             </div>
-          </div>
+          </div>--%>
           <div class="card bg-primary text-white text-center p-3">
             <blockquote class="blockquote mb-0">
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat.</p>
@@ -81,7 +81,7 @@
               </footer>
             </blockquote>
           </div>
-          <div class="card text-center">
+          <%--<div class="card text-center">
             <div class="card-body">
               <h5 class="card-title">Card title<span class="badge badge-secondary">New</span></h5>
               <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
@@ -107,7 +107,7 @@
               <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
               <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
             </div>
-          </div>
+          </div>--%>
         </div>
       </div>
       <div id="ongoing" class="tab-pane fade">
