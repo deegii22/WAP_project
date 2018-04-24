@@ -20,7 +20,7 @@ public class DBService {
 
     public static Connection connectDB() {
         try {
-            if(conn == null) conn = DBSingleton.getInstance().getConnection();
+            if (conn == null) conn = DBSingleton.getInstance().getConnection();
             stmt = conn.createStatement();
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
@@ -38,15 +38,23 @@ public class DBService {
                 "values ('" + event.getName() + "', 0, STR_TO_DATE('25-04-2018', '%d-%m-%Y'), STR_TO_DATE('26-04-2018', '%d-%m-%Y'), '', 1, 0, '', sysdate());";
 
         try {
-
             int rs = stmt.executeUpdate(sql);
             if (rs == 1) {
-                return new Result("Add Event Successful", null);
+                for (EventRoute e : event.getRoutes()) {
+                    sql = "insert into Event_route (event_id, start_position, end_position, status, priority, duration)\n" +
+                            "    values (LAST_INSERT_ID(), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
+                    int rsSub = stmt.executeUpdate(sql);
+                    if(rsSub!=1) {
+                        return new Result("Error occured on add Event Route.",null);
+                    }
+                }
+                return new Result("",null);
             }
+            else
+                return new Result("Error occured on add Event.",null);
         } catch (Exception e) {
             return new Result(e.getMessage(), null);
         }
-        return null;
     }
 
     public String eventList(int type) {
@@ -253,7 +261,7 @@ public class DBService {
             st.setString(1, user.getEmail());
             ResultSet result = st.executeQuery();
 
-            if(result.next()){
+            if (result.next()) {
                 return new Result("This email address already exists!", null);
             }
 

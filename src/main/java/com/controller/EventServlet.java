@@ -29,7 +29,6 @@ public class EventServlet extends HttpServlet {
                 case "add":
                     Result res = addEvent(request);
                     out.print(res.getDesc());
-                    addEvent(request);
                     break;
                 case "startEvent":
                     startEvent(1);
@@ -60,9 +59,8 @@ public class EventServlet extends HttpServlet {
 
     private Result addEvent(HttpServletRequest request) {
         try {
-            String eventName = request.getParameter("eventName");
             int ownerID = 1;    //session-s awna.
-            String name = request.getParameter("eventName");
+            String name = request.getParameter("name");
             String route = request.getParameter("route");
             Date start = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("start"));
             Date end = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("end"));
