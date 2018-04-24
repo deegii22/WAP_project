@@ -1,5 +1,6 @@
 package com.service;
 
+import com.google.common.hash.Hashing;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -9,6 +10,7 @@ import com.model.EventRoute;
 import org.json.simple.JSONObject;
 import com.model.User;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
 
@@ -296,8 +298,9 @@ public class DBService {
                 res.setBirthday(rs.getString("birth_date"));
 
                 String pwd = rs.getString("password");
+                String pwdSha256 = Hashing.sha256().hashString(user.getPassword(), StandardCharsets.UTF_8).toString();
 
-                if (pwd.equals(user.getPassword())) {
+                if (pwd.equals(pwdSha256)) {
                     return new Result("", res);
                 } else
                     return new Result("Invalid username or password", null);
@@ -316,14 +319,7 @@ public class DBService {
         String existCheckSQL = "select name from user where email= ?";
 
         sql = "insert into user (name, email, password, phone, sex, birth_date, created)" +
-                " values ("
-                + "'" + user.getName() + "'"
-                + ", '" + user.getEmail() + "'"
-                + ", '" + user.getPassword() + "'"
-                + ", '" + user.getPhone() + "'"
-                + ", '" + user.getSex() + "'"
-                + ", '" + user.getBirthday() + "'"
-                + ", now())";
+                " values (?,?,?,?,?,?, now())";
 
         try {
             PreparedStatement st = conn.prepareStatement(existCheckSQL);
@@ -334,7 +330,16 @@ public class DBService {
                 return new Result("This email address already exists!", null);
             }
 
-            int rs = stmt.executeUpdate(sql);
+            PreparedStatement stat = conn.prepareStatement(sql);
+            String pwdSha256 = Hashing.sha256().hashString(user.getPassword(), StandardCharsets.UTF_8).toString();
+            stat.setString(1, user.getName());
+            stat.setString(2, user.getEmail());
+            stat.setString(3, pwdSha256);
+            stat.setString(4, user.getPhone());
+            stat.setString(5,user.getSex());
+            stat.setString(6,user.getBirthday());
+
+            int rs = stat.executeUpdate();
             if (rs == 1) {
                 return new Result("Succeed sign up!", new String("Succeed sign up!"));
             }
@@ -343,5 +348,4 @@ public class DBService {
         }
         return null;
     }
-
 }
