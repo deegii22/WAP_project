@@ -1,42 +1,44 @@
 package com.controller;
 
-import com.model.LoginCheck;
 import com.model.User;
+import com.service.DBService;
+import com.service.Result;
 
-import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.IOException;
-import java.util.HashMap;
+import java.sql.Connection;
 
 @WebServlet("/Login")
 public class LoginServlet extends javax.servlet.http.HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        //String[] usernamePassword = {request.getParameter("user"), request.getParameter("pwd")};
-        User userInput = new User();
-        userInput.setEmail(request.getParameter("user"));
-        userInput.setPassword(request.getParameter("pwd"));
+        User user = new User();
+        user.setEmail(request.getParameter("user").trim());
+        user.setPassword(request.getParameter("pwd").trim());
 
-        LoginCheck check = new LoginCheck();
+        DBService dbservice = new DBService();
+        Connection con = dbservice.connectDB();
+
+        Result result = dbservice.login(user);
         RequestDispatcher dispatcher;
 
-        if(check.checkUser(userInput)){
+        if(result.getObj() != null){
             //Create session object if it is already not created.
             HttpSession session = request.getSession(true);
-            session.setAttribute("loginInfo", userInput);
+            session.setAttribute("user", (User) result.getObj());
             dispatcher = request.getRequestDispatcher("home.jsp");
         }else{
-            request.setAttribute("loginError", new String("User not found!"));
+            request.setAttribute("loginError", result.getDesc());
             dispatcher = request.getRequestDispatcher("login.jsp");
         }
 
         dispatcher.forward(request, response);
 
     }
-/*
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-    }*/
+    }
 }

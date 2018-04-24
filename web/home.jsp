@@ -7,6 +7,11 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="header.jsp"%>
+<%
+  if(session.getAttribute("user") == null){
+      response.sendRedirect("login.jsp");
+  }
+%>
 <body>
 <div class="container">
   <div class="header">
@@ -19,6 +24,7 @@
           <p class="lead">
               <a class="btn btn-primary btn-lg" href="#" role="button" id="addEvent">Add Event</a>
               <a class="btn btn-danger btn-lg" href="#" role="button" id="alertEvent">Red Box</a>
+              <a class="btn btn-primary btn-lg" href='<% if(session.getAttribute("user") != null){ session.setMaxInactiveInterval(1); out.print("login.jsp");} %>' role="button" id="logout">Sign out</a>
           </p>
           <div class="add-event">
               <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>

@@ -2,6 +2,8 @@ package com.service;
 
 public class Result {
     String desc;
+    Object obj;
+
     public String getDesc() {
         return desc;
     }
@@ -9,8 +11,6 @@ public class Result {
     public Object getObj() {
         return obj;
     }
-
-    Object obj;
 
     public Result(String desc, Object obj) {
         this.desc = desc;

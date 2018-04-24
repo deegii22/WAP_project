@@ -7,6 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import com.model.Event;
 import com.model.EventRoute;
 import org.json.simple.JSONObject;
+import com.model.User;
 
 import java.sql.*;
 import java.util.*;
@@ -20,7 +21,7 @@ public class DBService {
 
     public static Connection connectDB() {
         try {
-            conn = DBSingleton.getInstance().getConnection();
+            if (conn == null) conn = DBSingleton.getInstance().getConnection();
             stmt = conn.createStatement();
         } catch (ClassNotFoundException e) {
             // TODO Auto-generated catch block
@@ -38,15 +39,23 @@ public class DBService {
                 "values ('" + event.getName() + "', 0, STR_TO_DATE('25-04-2018', '%d-%m-%Y'), STR_TO_DATE('26-04-2018', '%d-%m-%Y'), '', 1, 0, '', sysdate());";
 
         try {
-
             int rs = stmt.executeUpdate(sql);
             if (rs == 1) {
-                return new Result("Add Event Successful", null);
+                for (EventRoute e : event.getRoutes()) {
+                    sql = "insert into Event_route (event_id, start_position, end_position, status, priority, duration)\n" +
+                            "    values (LAST_INSERT_ID(), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
+                    int rsSub = stmt.executeUpdate(sql);
+                    if(rsSub!=1) {
+                        return new Result("Error occured on add Event Route.",null);
+                    }
+                }
+                return new Result("",null);
             }
+            else
+                return new Result("Error occured on add Event.",null);
         } catch (Exception e) {
             return new Result(e.getMessage(), null);
         }
-        return null;
     }
 
     public JSONObject[] eventList(int type) {
@@ -221,31 +230,71 @@ public class DBService {
         }
         return ret;
     }
-        /*
-        public Result login(String userId, String password) {
-            System.out.println("Login");
-            sql = "select * from employee where empid='" + userId + "'";
-            try {
-                ResultSet rs = stmt.executeQuery(sql);
-                while (rs.next()) {
-                    String pwd = rs.getString("password");
-                    String role = rs.getString("role");
 
-                    if (password.equals(pwd)) {
+    public Result login(User user) {
+        sql = "select * from user where email= ? ";
+        try {
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, user.getEmail());
+            ResultSet rs = st.executeQuery();
 
-                        return new Result("", role);
-                    } else
-                        return new Result("Invalid username or password", null);
+            User res = new User();
+            while (rs.next()) {
+                res.setId(rs.getLong("user_id"));
+                res.setName(rs.getString("name"));
+                res.setEmail(rs.getString("email"));
+                res.setPassword(rs.getString("password"));
+                res.setPhone(rs.getString("phone"));
+                res.setSex(rs.getString("sex"));
+                res.setBirthday(rs.getString("birth_date"));
 
-                }
+                String pwd = rs.getString("password");
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return new Result("Invalid username or password", null);
+                if (pwd.equals(user.getPassword())) {
+                    return new Result("", res);
+                } else
+                    return new Result("Invalid username or password", null);
+
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
             return new Result("Invalid username or password", null);
         }
+        return new Result("Invalid username or password", null);
+    }
 
 
-        */
+    public Result addUser(User user) {
+        String existCheckSQL = "select name from user where email= ?";
+
+        sql = "insert into user (name, email, password, phone, sex, birth_date, created)" +
+                " values ("
+                + "'" + user.getName() + "'"
+                + ", '" + user.getEmail() + "'"
+                + ", '" + user.getPassword() + "'"
+                + ", '" + user.getPhone() + "'"
+                + ", '" + user.getSex() + "'"
+                + ", '" + user.getBirthday() + "'"
+                + ", now())";
+
+        try {
+            PreparedStatement st = conn.prepareStatement(existCheckSQL);
+            st.setString(1, user.getEmail());
+            ResultSet result = st.executeQuery();
+
+            if (result.next()) {
+                return new Result("This email address already exists!", null);
+            }
+
+            int rs = stmt.executeUpdate(sql);
+            if (rs == 1) {
+                return new Result("Succeed sign up!", new String("Succeed sign up!"));
+            }
+        } catch (Exception e) {
+            return new Result(e.getMessage(), null);
+        }
+        return null;
+    }
+
 }
