@@ -28,7 +28,7 @@
           </p>
           <div class="add-event">
               <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>
-              <input type="text" id="route" name="route" placeholder="Route" class="form-control"/>
+              <input type="file" id="file" name="file" />
               <input type="date" id="start" name="start" placeholder="Start Datetime" class="form-control"/>
               <input type="date" id="end" name="end" placeholder="End Datetime" class="form-control"/>
               <div>
