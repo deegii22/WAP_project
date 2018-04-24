@@ -9,17 +9,20 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import javax.servlet.http.Part;
+import java.io.*;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
 @WebServlet("/Event")
+@MultipartConfig
 public class EventServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
@@ -29,7 +32,6 @@ public class EventServlet extends HttpServlet {
                 case "add":
                     Result res = addEvent(request);
                     out.print(res.getDesc());
-                    addEvent(request);
                     break;
                 case "startEvent":
                     startEvent(1);
@@ -72,8 +74,17 @@ public class EventServlet extends HttpServlet {
             String route = request.getParameter("route");
             Date start = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("start"));
             Date end = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("end"));
+            Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
+            InputStream fileContent = filePart.getInputStream();
+            byte[] buffer = new byte[fileContent.available()];
+            fileContent.read(buffer);
+            File targetFile = new File("D:\\UploadFiles\\123"+fileName);
+            OutputStream outStream = new FileOutputStream(targetFile);
+            outStream.write(buffer);
             Event event = new Event();
             event.setName(name);
+            event.setRoute("D:\\UploadFiles\\123"+fileName);
             event.setStartDate(start);
             event.setEndDate(end);
             JSONParser parser = new JSONParser();
