@@ -29,6 +29,7 @@ public class EventServlet extends HttpServlet {
                 case "add":
                     Result res = addEvent(request);
                     out.print(res.getDesc());
+                    addEvent(request);
                     break;
                 case "startEvent":
                     startEvent(1);
@@ -48,17 +49,14 @@ public class EventServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        DBService db = new DBService();
-        JSONObject[] results = db.eventList(0);
-
         /*long userId = (long) request.getSession().getAttribute("user");*/
         long userId = 1;
         switch (action) {
             case "upcomingList":
-                out.print(Arrays.toString(results));
+                out.print(eventList(0, userId));
                 break;
             case "ongoingList":
-                /*out.print(eventList(1, userId));*/
+                out.print(eventList(1, userId));
                 break;
             default:
                 break;
@@ -68,8 +66,9 @@ public class EventServlet extends HttpServlet {
 
     private Result addEvent(HttpServletRequest request) {
         try {
+            String eventName = request.getParameter("eventName");
             int ownerID = 1;    //session-s awna.
-            String name = request.getParameter("name");
+            String name = request.getParameter("eventName");
             String route = request.getParameter("route");
             Date start = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("start"));
             Date end = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("end"));
@@ -93,6 +92,11 @@ public class EventServlet extends HttpServlet {
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
         }
+    }
+
+    private String eventList(int type, long userId) {
+        DBService db = new DBService();
+        return Arrays.toString(db.eventList(type));
     }
 
     private void startEvent(int eventId) {

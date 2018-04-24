@@ -96,9 +96,9 @@ function showloginPage(){
 function upcomingList(data) {
     for (let item in data) {
         $('<div>').attr({ 'class': "card","id": "card" + data[item].eventId }).appendTo('#columns');
-        /*if(data[item].img != null){
+        if(data[item].img != ""){
             $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('.card');
-        }*/
+        }
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
         $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
