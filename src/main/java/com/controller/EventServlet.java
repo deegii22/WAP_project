@@ -1,13 +1,22 @@
 package com.controller;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.model.Event;
 import com.model.EventRoute;
 import com.service.DBService;
 import com.service.Result;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -16,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 import java.io.*;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -105,17 +113,10 @@ public class EventServlet extends HttpServlet {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), formatter);
             LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), formatter);
-            Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
-            InputStream fileContent = filePart.getInputStream();
-            byte[] buffer = new byte[fileContent.available()];
-            fileContent.read(buffer);
-            File targetFile = new File("D:\\UploadFiles\\123" + fileName);
-            OutputStream outStream = new FileOutputStream(targetFile);
-            outStream.write(buffer);
+            String urlImg = getImageUrl(request);
             Event event = new Event();
             event.setName(name);
-            event.setRoute("D:\\UploadFiles\\123" + fileName);
+            event.setRoute(urlImg);
             event.setStartDate(start);
             event.setEndDate(end);
             JSONParser parser = new JSONParser();
@@ -132,6 +133,66 @@ public class EventServlet extends HttpServlet {
             return db.AddEvent(event);
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
+        }
+    }
+
+    public String getImageUrl(HttpServletRequest req) throws IOException, ServletException {
+        Part filePart = req.getPart("file");
+        final String fileName = filePart.getSubmittedFileName();
+        // Check extension of file
+        if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
+            final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+            String[] allowedExt = { "jpg", "jpeg", "png", "gif" };
+            for (String s : allowedExt) {
+                if (extension.equals(s)) {
+                    return this.uploadFile(filePart);
+                }
+            }
+            throw new ServletException("file must be an image");
+        }
+        return "";
+    }
+    public String uploadFile(Part filePart) throws IOException {
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("-YYYY-MM-dd-HHmmssSSS");
+        DateTime dt = DateTime.now(DateTimeZone.UTC);
+        String dtString = dt.toString(dtf);
+        final String fileName =  dtString + filePart.getSubmittedFileName();
+        BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJTPJNGONK2H3N74Q", "skofv8UdMWcxm7PvyDsJztrtCXxUpjqGrKs2wFuR");
+        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                .withRegion("us-east-2")
+                .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                .build();
+        InputStream inputStream = filePart.getInputStream();
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(new File(getServletContext().getRealPath("/")
+                    + fileName));
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+
+            while ((read = inputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        } catch (FileNotFoundException fne) {
+
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+        try {
+            System.out.println("Uploading a new object to S3 from a file\n");
+            File file = new File(getServletContext().getRealPath("/")
+                    + fileName);
+            s3Client.putObject(new PutObjectRequest(
+                    "wapbucket", fileName , file));
+            return s3Client.getUrl("wapbucket",fileName).toString();
+
+        } catch (AmazonServiceException ase) {
+            return ase.getMessage();
         }
     }
 }
