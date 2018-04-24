@@ -14,17 +14,16 @@
     <p id="errorMessage" style="color:red">
         <%
             String errorMessage = (String)request.getAttribute("loginError");
-            if(errorMessage != null){
-            out.print(errorMessage);
-        } %>
+            if(errorMessage != null){out.print(errorMessage);}
+        %>
     </p>
     <form action="Login" method="post">
         <label for="user">Username: </label>
-        <input type="email" name="user" id="user" placeholder="User name"
+        <input type="email" name="user" id="user" placeholder="Email"
                pattern="[\w]{3,15}@[\w]{2,10}.[a-zA-Z]{2,8}" title="Please input correct format email!" required /></br>
         <label for="pwd">Password: </label><input type="password" name="pwd" id="pwd" required placeholder="Password"/></br>
         <button type="submit" id="login">Login</button>
-        <button id="signup" onclick="showSignUpPage()">Sign Up</button>
+        <a href="signup.jsp">Sign Up</a>
     </form>
 
 </body>
