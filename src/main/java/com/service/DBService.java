@@ -6,12 +6,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.model.Event;
+import com.model.EventMember;
 import com.model.EventRoute;
 import org.json.simple.JSONObject;
 import com.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -38,7 +41,7 @@ public class DBService {
     public Result AddEvent(Event event) {
         conn = connectDB();
         sql = "insert into Event (name, status, start_date, end_date, route_img, owner_id, emergency_flag, emergency_info, created)\n" +
-                "values ('" + event.getName() + "', 0, STR_TO_DATE('25-04-2018', '%d-%m-%Y'), STR_TO_DATE('26-04-2018', '%d-%m-%Y'), '"+event.getRoute()+"', 1, 0, '', sysdate());";
+                "values ('" + event.getName() + "', 0, STR_TO_DATE('25-04-2018', '%d-%m-%Y'), STR_TO_DATE('26-04-2018', '%d-%m-%Y'), '" + event.getRoute() + "', 1, 0, '', sysdate());";
 
         try {
             int rs = stmt.executeUpdate(sql);
@@ -47,19 +50,19 @@ public class DBService {
                     sql = "insert into Event_route (event_id, start_position, end_position, status, priority, duration)\n" +
                             "    values (LAST_INSERT_ID(), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
                     int rsSub = stmt.executeUpdate(sql);
-                    if(rsSub!=1) {
-                        return new Result("Error occured on add Event Route.",null);
+                    if (rsSub != 1) {
+                        return new Result("Error occured on add Event Route.", null);
                     }
                 }
-                return new Result("",null);
-            }
-            else
-                return new Result("Error occured on add Event.",null);
+                return new Result("", null);
+            } else
+                return new Result("Error occured on add Event.", null);
         } catch (Exception e) {
             return new Result(e.getMessage(), null);
         }
     }
 
+    /*Added by Enkhee, get event list*/
     public JSONObject[] eventList(int type) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
@@ -75,32 +78,33 @@ public class DBService {
                 event.setEventID(resultSet.getInt("event_id"));
                 event.setName(resultSet.getString("name"));
                 event.setStatus(resultSet.getInt("status"));
-                event.setStartDate(resultSet.getDate("start_date"));
-                event.setEndDate(resultSet.getDate("end_date"));
+                event.setStartDate(resultSet.getTimestamp("start_date").toLocalDateTime());
+                event.setEndDate(resultSet.getTimestamp("end_date").toLocalDateTime());
                 event.setOwnerId(resultSet.getInt("owner_id"));
                 event.setImg(resultSet.getString("route_img"));
                 event.seteFlag(resultSet.getInt("emergency_flag"));
                 event.seteInfo(resultSet.getString("emergency_info"));
-                event.setCreated(resultSet.getDate("created"));
+                event.setCreated(resultSet.getTimestamp("created").toLocalDateTime());
                 events.add(event);
             }
 
             Event[] data = events.stream().toArray(Event[]::new);
 
-            if(data.length > 0) {
+            if (data.length > 0) {
                 JSONObject[] results = new JSONObject[data.length];
-                for(int i = 0; i< data.length; i++) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+                for (int i = 0; i < data.length; i++) {
                     JSONObject res = new JSONObject();
                     res.put("eventId", data[i].getEventID());
                     res.put("name", data[i].getName());
                     res.put("status", data[i].getStatus());
-                    res.put("startDate", "");
-                    res.put("endDate", "");
+                    res.put("startDate", data[i].getStartDate().format(formatter));
+                    res.put("endDate", data[i].getEndDate().format(formatter));
                     res.put("ownerId", data[i].getOwnerId());
                     res.put("img", data[i].getImg());
                     res.put("emergencyFlag", data[i].geteFlag());
                     res.put("emergencyInfo", data[i].geteInfo());
-                    res.put("created", "");
+                    res.put("created", data[i].getCreated().format(formatter));
                     results[i] = res;
                 }
                 return results;
@@ -144,7 +148,7 @@ public class DBService {
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next()){
+            while (resultSet.next()) {
                 obj.put("eventId", resultSet.getInt("event_id"));
                 obj.put("name", resultSet.getString("name"));
                 obj.put("status", resultSet.getInt("status"));
@@ -180,11 +184,12 @@ public class DBService {
         return obj;
     }
 
-    public String routList(int eventId, Boolean isActive) {
+    /*Added by Enkhee, get event routes*/
+    public JSONObject[] eventRoutes(int eventId, Boolean isActive) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String ret = "[]";
+        JSONObject[] objectToReturn = new JSONObject[1];
         try {
             if (!isActive) {
                 preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ? order by priority");
@@ -204,14 +209,30 @@ public class DBService {
                 route.setDuration(resultSet.getInt("duration"));
                 routes.add(route);
             }
-            //https://github.com/google/gson
-            Gson gson = new Gson();
-            JsonElement element = gson.toJsonTree(routes, new TypeToken<List<Event>>() {
-            }.getType());
-            JsonArray jsonArray = element.getAsJsonArray();
-            ret = jsonArray.toString();
+
+            EventRoute[] data = routes.stream().toArray(EventRoute[]::new);
+
+            if (data.length > 0) {
+                JSONObject[] results = new JSONObject[data.length];
+                for (int i = 0; i < data.length; i++) {
+                    JSONObject res = new JSONObject();
+                    res.put("eventId", data[i].getEventID());
+                    res.put("startPostion", data[i].getStartPosition());
+                    res.put("endPosition", data[i].getEndPosition());
+                    res.put("status", data[i].getStatus());
+                    res.put("priority", data[i].getPriority());
+                    res.put("duration", data[i].getDuration());
+                    results[i] = res;
+                }
+                return results;
+            }
+
+            JSONObject res = new JSONObject();
+            res.put("error", "No results found");
+            objectToReturn[0] = res;
+            return objectToReturn;
+
         } catch (Exception e) {
-            ret = "[]";
             e.printStackTrace();
         } finally {
             if (resultSet != null) {
@@ -229,37 +250,21 @@ public class DBService {
                 }
             }
         }
-        return ret;
+        return objectToReturn;
     }
 
-    public String startEvent(int eventId) {
+    /*Added by Enkhee, start Event*/
+    public void startEvent(int eventId) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String ret = "[]";
         try {
-            preparedStatement = conn.prepareStatement("select * from Event_route where event_id = ? and status = 0  order by priority");
+            preparedStatement = conn.prepareStatement("update event set status=1, start_date=sysdate(), " +
+                    "end_date=date_add(sysdate(), interval (select sum(duration) from event_route where event_id=? group by event_id) minute) " +
+                    "where event_id=?");
             preparedStatement.setInt(1, eventId);
             resultSet = preparedStatement.executeQuery();
-            List<EventRoute> routes = new ArrayList();
-            while (resultSet.next()) {
-                EventRoute route = new EventRoute();
-                route.setEventID(resultSet.getInt("event_id"));
-                route.setStartPosition(resultSet.getString("start_position"));
-                route.setEndPosition(resultSet.getString("end_position"));
-                route.setStatus(resultSet.getInt("status"));
-                route.setPriority(resultSet.getInt("priority"));
-                route.setDuration(resultSet.getInt("duration"));
-                routes.add(route);
-            }
-            //https://github.com/google/gson
-            Gson gson = new Gson();
-            JsonElement element = gson.toJsonTree(routes, new TypeToken<List<Event>>() {
-            }.getType());
-            JsonArray jsonArray = element.getAsJsonArray();
-            ret = jsonArray.toString();
         } catch (Exception e) {
-            ret = "[]";
             e.printStackTrace();
         } finally {
             if (resultSet != null) {
@@ -277,7 +282,123 @@ public class DBService {
                 }
             }
         }
-        return ret;
+    }
+
+    /*Added by Enkhee, join Event*/
+    public void joinEvent(int eventId, int userId) {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = conn.prepareStatement("insert into event_member(event_id, user_id) values(?,?)");
+            preparedStatement.setInt(1, eventId);
+            preparedStatement.setInt(2, userId);
+            resultSet = preparedStatement.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /*Added by Enkhee, finish Route*/
+    public void finishRoute(int eventId, int priority) {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = conn.prepareStatement("update event_route set status=1 where event_id=? and priority=?");
+            preparedStatement.setInt(1, eventId);
+            preparedStatement.setInt(2, priority);
+            resultSet = preparedStatement.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /*Added by Enkhee, get event members*/
+    public JSONObject[] eventMembers(int eventId) {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        JSONObject[] objectToReturn = new JSONObject[1];
+        try {
+            preparedStatement = conn.prepareStatement("select * from Event_member where event_id = ?");
+            preparedStatement.setInt(1, eventId);
+            resultSet = preparedStatement.executeQuery();
+            List<EventMember> members = new ArrayList();
+            while (resultSet.next()) {
+                EventMember member = new EventMember();
+                member.setEventID(resultSet.getInt("event_id"));
+                member.setUserId(resultSet.getInt("user_id"));
+                members.add(member);
+            }
+
+            EventMember[] data = members.stream().toArray(EventMember[]::new);
+
+            if (data.length > 0) {
+                JSONObject[] results = new JSONObject[data.length];
+                for (int i = 0; i < data.length; i++) {
+                    JSONObject res = new JSONObject();
+                    res.put("eventId", data[i].getEventID());
+                    res.put("userId", data[i].getUserId());
+                    results[i] = res;
+                }
+                return results;
+            }
+
+            JSONObject res = new JSONObject();
+            res.put("error", "No results found");
+            objectToReturn[0] = res;
+            return objectToReturn;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return objectToReturn;
     }
 
     public Result login(User user) {
@@ -336,8 +457,8 @@ public class DBService {
             stat.setString(2, user.getEmail());
             stat.setString(3, pwdSha256);
             stat.setString(4, user.getPhone());
-            stat.setString(5,user.getSex());
-            stat.setString(6,user.getBirthday());
+            stat.setString(5, user.getSex());
+            stat.setString(6, user.getBirthday());
 
             int rs = stat.executeUpdate();
             if (rs == 1) {
