@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.model.Event;
 import com.model.EventRoute;
+import org.json.simple.JSONObject;
 
 import java.sql.*;
 import java.util.*;
@@ -48,11 +49,12 @@ public class DBService {
         return null;
     }
 
-    public String eventList(int type) {
+    public JSONObject[] eventList(int type) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         String ret = "[]";
+        JSONObject[] objectToReturn = new JSONObject[1];
         try {
             preparedStatement = conn.prepareStatement("select * from Event where status = ?");
             preparedStatement.setInt(1, type);
@@ -72,14 +74,34 @@ public class DBService {
                 event.setCreated(resultSet.getDate("created"));
                 events.add(event);
             }
-            //https://github.com/google/gson
-            Gson gson = new Gson();
-            JsonElement element = gson.toJsonTree(events, new TypeToken<List<Event>>() {
-            }.getType());
-            JsonArray jsonArray = element.getAsJsonArray();
-            ret = jsonArray.toString();
+
+            Event[] data = events.stream().toArray(Event[]::new);
+
+            if(data.length > 0) {
+                JSONObject[] results = new JSONObject[data.length];
+                for(int i = 0; i< data.length; i++) {
+                    JSONObject res = new JSONObject();
+                    res.put("eventId", data[i].getEventID());
+                    res.put("name", data[i].getName());
+                    res.put("status", data[i].getStatus());
+                    res.put("startDate", "");
+                    res.put("endDate", "");
+                    res.put("ownerId", data[i].getOwnerId());
+                    res.put("img", data[i].getImg());
+                    res.put("emergencyFlag", data[i].geteFlag());
+                    res.put("emergencyInfo", data[i].geteInfo());
+                    res.put("created", "");
+                    results[i] = res;
+                }
+                return results;
+            }
+
+            JSONObject res = new JSONObject();
+            res.put("error", "No results found");
+            objectToReturn[0] = res;
+            return objectToReturn;
+
         } catch (Exception e) {
-            ret = "[]";
             e.printStackTrace();
         } finally {
             if (resultSet != null) {
@@ -97,7 +119,7 @@ public class DBService {
                 }
             }
         }
-        return ret;
+        return objectToReturn;
     }
 
     public String routList(int eventId, Boolean isActive) {

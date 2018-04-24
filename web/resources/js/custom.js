@@ -10,7 +10,13 @@ $(function (){
         $('.alert').toggle();
     });
 
-    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    $.ajax({
+        "url": "/Event?action=upcomingList",
+        "type": "GET",
+        "success": upcomingList,
+        "error": failureFunction
+    });
+    /*$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var target = $(e.target).attr("href");
         switch (target){
             case "#ongoing":
@@ -34,13 +40,7 @@ $(function (){
                     "success": upcomingList
                 });
         }
-    });
-
-    $.ajax({
-        "url": "/Event?action=upcomingList",
-        "type": "GET",
-        "success": eventUpcomingList
-    });
+    });*/
 
     $("#btnAddEvent").click(function(){
         $.ajax({
@@ -95,15 +95,16 @@ function showloginPage(){
 /*Added by deegii, upcoming event list*/
 function upcomingList(data) {
     for (let item in data) {
-        $('<div>').attr({ 'class': "card" }).appendTo('#columns');
-        if(data[item].img != null){
-            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].src}).appendTo('.card');
-        }
-        $('<div>').attr({ 'class': "card-body" }).appendTo('.card');
-        $('<h5>').attr({ 'class': "card-title" }).text(data[item].name).appendTo('.card-body');
-        $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('.card-title');
-        $('<div>').attr({ 'class': "card-text" }).text(data[item].name).appendTo('.card-body');
-        $('<a>').attr({ 'class': "card-link", 'href':''}).text("more ...").appendTo('.card-body');
+        $('<div>').attr({ 'class': "card","id": "card" + data[item].eventId }).appendTo('#columns');
+        /*if(data[item].img != null){
+            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('.card');
+        }*/
+        $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
+        $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
+        $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
+        $('<div>').attr({ 'class': "card-text" }).text(data[item].startDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({ 'class': "card-text" }).text(data[item].endDate).appendTo('#card-body' + data[item].eventId);
+        $('<a>').attr({ 'class': "card-link", 'href':'/Event?action=get?id=' + data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
     }
 }
 
@@ -112,3 +113,6 @@ function ongoingList(data) {
     console.log("ongoing");
 }
 
+function failureFunction() {
+    console.log("Couldn't load ajax");
+}

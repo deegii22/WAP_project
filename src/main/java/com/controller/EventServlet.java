@@ -45,17 +45,26 @@ public class EventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         PrintWriter out = response.getWriter();
-        long userId = (long) request.getSession().getAttribute("user");
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        DBService db = new DBService();
+        JSONObject[] results = db.eventList(0);
+
+        /*long userId = (long) request.getSession().getAttribute("user");*/
+        long userId = 1;
         switch (action) {
             case "upcomingList":
-                out.print(eventList(0, userId));
+                out.print(Arrays.toString(results));
                 break;
             case "ongoingList":
-                out.print(eventList(1, userId));
+                /*out.print(eventList(1, userId));*/
                 break;
             default:
                 break;
         }
+        out.flush();
     }
 
     private Result addEvent(HttpServletRequest request) {
@@ -86,11 +95,6 @@ public class EventServlet extends HttpServlet {
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
         }
-    }
-
-    private String eventList(int type, long userId) {
-        DBService db = new DBService();
-        return db.eventList(type);
     }
 
     private void startEvent(int eventId) {
