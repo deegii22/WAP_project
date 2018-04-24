@@ -82,15 +82,15 @@ public class EventServlet extends HttpServlet {
                 break;
             case "getAllRoutes":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.eventRoutes(id, false));
+                out.print(Arrays.toString(db.eventRoutes(id, false)));
                 break;
             case "getActiveRoutes":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.eventRoutes(id, true));
+                out.print(Arrays.toString(db.eventRoutes(id, true)));
                 break;
             case "getMembers":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.eventMembers(id));
+                out.print(Arrays.toString(db.eventMembers(id)));
                 break;
             default:
                 break;

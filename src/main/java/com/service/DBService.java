@@ -351,7 +351,7 @@ public class DBService {
         ResultSet resultSet = null;
         JSONObject[] objectToReturn = new JSONObject[1];
         try {
-            preparedStatement = conn.prepareStatement("select * from Event_member where event_id = ?");
+            preparedStatement = conn.prepareStatement("select e.event_id, e.user_id, u.name from Event_member e left join user u on e.user_id=u.user_id where e.event_id = ?");
             preparedStatement.setInt(1, eventId);
             resultSet = preparedStatement.executeQuery();
             List<EventMember> members = new ArrayList();
@@ -359,6 +359,7 @@ public class DBService {
                 EventMember member = new EventMember();
                 member.setEventID(resultSet.getInt("event_id"));
                 member.setUserId(resultSet.getInt("user_id"));
+                member.setUserName(resultSet.getString("name"));
                 members.add(member);
             }
 
@@ -370,6 +371,7 @@ public class DBService {
                     JSONObject res = new JSONObject();
                     res.put("eventId", data[i].getEventID());
                     res.put("userId", data[i].getUserId());
+                    res.put("userName", data[i].getUserName());
                     results[i] = res;
                 }
                 return results;
