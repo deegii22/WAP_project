@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS `User` (
   `user_id`    BIGINT NOT NULL AUTO_INCREMENT,
   `name`       VARCHAR(100),
   `email`      VARCHAR(100) UNIQUE,
-  `password`   VARCHAR(20),
+  `password`   VARCHAR(100),
   `phone`      VARCHAR(20),
   `sex`        VARCHAR(100),
   `birth_date` VARCHAR(100),

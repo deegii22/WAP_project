@@ -30,6 +30,17 @@ $(function (){
 
     $('#exampleModalCenter').on('hidden.bs.modal', hideEvent);
 
+    $(document).on('click', '#btnJoinRide', function () {
+        var id = $('#btnJoinRide').attr('data-eventId')
+        $.ajax({
+            url: '/Event?action=joinEvent&id=' + id,
+            type:"POST",
+            enctype: 'multipart/form-data',
+            success: function(data){
+            },
+        });
+    })
+
 
 /*Added by deegii, tab change event*/
     /*    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -167,6 +178,7 @@ function getEvent(e) {
         success: function(data){
             $('#exampleModalLongTitle').append(data.name);
             $('.modal-body').append(data.startDate + '<br/>' + data.endDate);
+            $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');
         },
     });
 }

@@ -18,6 +18,8 @@ import javax.servlet.http.Part;
 import java.io.*;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -30,13 +32,25 @@ public class EventServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         try {
             String action = request.getParameter("action");
+            int id = 0;
             switch (action) {
                 case "add":
                     Result res = addEvent(request);
                     out.print(res.getDesc());
                     break;
                 case "startEvent":
-                    startEvent(1);
+                    id = Integer.parseInt(request.getParameter("id"));
+                    db.startEvent(id);
+                    break;
+                case "joinEvent":
+                    id = Integer.parseInt(request.getParameter("id"));
+                    int user = (int) request.getSession().getAttribute("user");
+                    db.joinEvent(id, user);
+                    break;
+                case "finishRoute":
+                    id = Integer.parseInt(request.getParameter("id"));
+                    int priority = Integer.parseInt(request.getParameter("priority"));
+                    db.finishRoute(id, priority);
                     break;
                 default:
                     break;
@@ -52,9 +66,7 @@ public class EventServlet extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-
-        /*long userId = (long) request.getSession().getAttribute("user");*/
-
+        int id = 0;
         switch (action) {
             case "upcomingList":
                 out.print(Arrays.toString(db.eventList(0)));
@@ -63,8 +75,20 @@ public class EventServlet extends HttpServlet {
                 out.print(Arrays.toString(db.eventList(1)));
                 break;
             case "get":
-                int id = Integer.parseInt(request.getParameter("id"));
+                id = Integer.parseInt(request.getParameter("id"));
                 out.print(db.getEvent(id));
+                break;
+            case "getAllRoutes":
+                id = Integer.parseInt(request.getParameter("id"));
+                out.print(db.eventRoutes(id, false));
+                break;
+            case "getActiveRoutes":
+                id = Integer.parseInt(request.getParameter("id"));
+                out.print(db.eventRoutes(id, true));
+                break;
+            case "getMembers":
+                id = Integer.parseInt(request.getParameter("id"));
+                out.print(db.eventMembers(id));
                 break;
             default:
                 break;
@@ -78,28 +102,29 @@ public class EventServlet extends HttpServlet {
             int ownerID = 1;    //session-s awna.
             String name = request.getParameter("eventName");
             String route = request.getParameter("route");
-            Date start = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("start"));
-            Date end = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("end"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), formatter);
+            LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), formatter);
             Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
             InputStream fileContent = filePart.getInputStream();
             byte[] buffer = new byte[fileContent.available()];
             fileContent.read(buffer);
-            File targetFile = new File("D:\\UploadFiles\\123"+fileName);
+            File targetFile = new File("D:\\UploadFiles\\123" + fileName);
             OutputStream outStream = new FileOutputStream(targetFile);
             outStream.write(buffer);
             Event event = new Event();
             event.setName(name);
-            event.setRoute("D:\\UploadFiles\\123"+fileName);
+            event.setRoute("D:\\UploadFiles\\123" + fileName);
             event.setStartDate(start);
             event.setEndDate(end);
             JSONParser parser = new JSONParser();
             JSONArray json = (JSONArray) parser.parse(route);
-            for(int i=0;i< json.size();i++){
+            for (int i = 0; i < json.size(); i++) {
                 EventRoute eRoute = new EventRoute();
                 eRoute.setPriority(i);
                 eRoute.setStartPosition((String) ((JSONObject) json.get(0)).get("startPosition"));
-                eRoute.setEndPosition((String)((JSONObject) json.get(0)).get("endPosition"));
+                eRoute.setEndPosition((String) ((JSONObject) json.get(0)).get("endPosition"));
                 eRoute.setDuration(Integer.parseInt((String) ((JSONObject) json.get(0)).get("duration")));
                 event.addRoute(eRoute);
             }
@@ -108,9 +133,5 @@ public class EventServlet extends HttpServlet {
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
         }
-    }
-
-    private void startEvent(int eventId) {
-
     }
 }

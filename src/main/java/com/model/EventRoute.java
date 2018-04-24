@@ -14,48 +14,47 @@ public class EventRoute implements Serializable {
         return eventID;
     }
 
-    public String getStartPosition() {
-        return startPosition;
-    }
-
-    public String getEndPosition() {
-        return endPosition;
-    }
-
-    public int getPriority() {
-        return priority;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
     public void setEventID(long eventID) {
         this.eventID = eventID;
+    }
+
+    public String getStartPosition() {
+        return startPosition;
     }
 
     public void setStartPosition(String startPosition) {
         this.startPosition = startPosition;
     }
 
+    public String getEndPosition() {
+        return endPosition;
+    }
+
     public void setEndPosition(String endPosition) {
         this.endPosition = endPosition;
+    }
+
+    public int getPriority() {
+        return priority;
     }
 
     public void setPriority(int priority) {
         this.priority = priority;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public int getStatus() {
+        return status;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public int getDuration() {
         return duration;
     }
 
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
 }
