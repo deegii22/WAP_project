@@ -102,18 +102,7 @@
 
     <div class="tab-content">
       <div id="upcoming" class="tab-pane fade show active">
-        <div class="card-columns" id="columns">
-          <div class="card bg-primary text-white text-center p-3">
-            <blockquote class="blockquote mb-0">
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat.</p>
-              <footer class="blockquote-footer">
-                <small>
-                  Someone famous in <cite title="Source Title">Source Title</cite>
-                </small>
-              </footer>
-            </blockquote>
-          </div>
-        </div>
+        <div class="card-columns" id="columns"></div>
       </div>
       <div id="ongoing" class="tab-pane fade">
           <div class="card-columns" id="columns1"></div>

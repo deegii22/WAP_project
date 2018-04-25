@@ -178,7 +178,7 @@ function ongoingList(data) {
         $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
         $('<div>').attr({ 'class': "card-text" }).text(data[item].startDate).appendTo('#card-body' + data[item].eventId);
         $('<div>').attr({ 'class': "card-text" }).text(data[item].endDate).appendTo('#card-body' + data[item].eventId);
-        $('<a>').attr({ 'class': "card-link", 'data-toggle':'modal','data-target':'#exampleModalCenter','href':'/Event?action=get?id=' + data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
+        $('<a>').attr({ 'class': "card-link", 'href':'#','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
     }
 }
 
@@ -270,6 +270,14 @@ function hideEvent() {
 /*Added by Deegii*/
 function upcomingAjaxList() {
     $('#columns').empty();
+
+    $('<div>').attr({"class":"card bg-primary text-white text-center p-3"}).appendTo("#columns");
+    $('<blockquote>').attr({"class":"blockquote mb-0"}).appendTo('.card.bg-primary.text-white.text-center.p-3');
+    $('<p>').text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat.").appendTo('.blockquote.mb-0');
+    $('<footer>').attr({"class":"blockquote-footer"}).appendTo('.blockquote.mb-0');
+    $('<small>').attr({"class":"small"}).text("Someone famous in").appendTo('.blockquote-footer');
+    $('<cite>').attr({"title":"Source Title"}).text("Source Title").appendTo('.small');
+
     $.ajax({
         url: "/Event?action=upcomingList",
         type: "GET",
