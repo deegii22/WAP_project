@@ -88,33 +88,19 @@ $(function () {
         });
     })
 
-    /*Added by deegii, tab change event*/
-    /*    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-            var target = $(e.target).attr("href");
-            switch (target){
-                case "#ongoing":
-                    $.ajax({
-                        "url": "/Event?action=ongoingList",
-                        "type": "GET",
-                        "success": ongoingList
-                    });
-                    break;
-                case "#members":
-                    $.ajax({
-                        "url": "/Event?action=membersList",
-                        "type": "GET",
-                        "success": membersList
-                    });
-                    break;
-                default :
-                    $.ajax({
-                        "url": "/Event?action=upcomingList",
-                        "type": "GET",
-                        "success": upcomingList
-                    });
-            }
+    $(document).on('click', '#btnFinish', function (e) {
+        var eventId = e.target.attributes.getNamedItem('data-eventId').value;
+        var priority = e.target.attributes.getNamedItem('data-priority').value;
+
+        $.ajax({
+            url: '/Event?action=finishRoute&id=' + eventId + '&priority=' + priority,
+            type: "POST",
+            success: function () {
+                $('#exampleModalCenter').modal('hide');
+            },
+            error: failureFunction
         });
-    */
+    })
 
     $("#btnAddEvent").click(function () {
         var file_data = $("#file").prop("files")[0];   // Getting the properties of file from file field
@@ -140,6 +126,7 @@ $(function () {
             $('#eventName').val("");
             $('#start').val("");
             $('#end').val("");
+                $("#dynamicTable").empty();
         });
     });
 
@@ -274,6 +261,7 @@ function getEvent(e) {
     var id = e.relatedTarget.attributes.getNamedItem('data-eventId').value;
     var type = e.relatedTarget.getAttribute('href');
     var emergencyFlag;
+    var myEvent = 0;
     $.ajax({
         url: '/Event?action=get&id=' + id,
         type: "GET",
@@ -292,13 +280,15 @@ function getEvent(e) {
                     'id': "btnStartEvent"
                 }).text("Start an event").appendTo('.modal-footer');
             }
-            $('<button>').attr({
-                'data-eventId': data.eventId,
-                'class': "btn btn-warning",
-                'id': "btnJoinRide"
-            }).text("Join a ride").appendTo('.modal-footer');
-            var aa = sessionStorage.getItem("user");
+            if (!data.isJoin) {
+                $('<button>').attr({
+                    'data-eventId': data.eventId,
+                    'class': "btn btn-warning",
+                    'id': "btnJoinRide"
+                }).text("Join a ride").appendTo('.modal-footer');
+            }
             emergencyFlag = data.emergencyFlag;
+            myEvent = data.myEvent;
         },
     });
 
@@ -345,14 +335,30 @@ function getEvent(e) {
                             'data-priority': data[item].priority
                         }).text("finished").appendTo('#td' + data[item].priority);
                     } else {
-                        if (emergencyFlag == "0") {
-                            $('<button>').attr({
-                                'class': "btn btn-secondary",
-                                'id' : 'btnFinish',
-                                'data-eventid': id,
-                                'data-priority': data[item].priority
-                            }).text("finish").appendTo('#td' + data[item].priority);
-                        } else {
+                        if (emergencyFlag == "0" && firstE) {
+                            if (myEvent == 1) {
+                                $('<button>').attr({
+                                    'class': "btn btn-secondary",
+                                    'data-eventid': id,
+                                    'id':"btnFinish",
+                                    'data-priority': data[item].priority
+                                }).text("finish").appendTo('#td' + data[item].priority);
+                                $('<td>').attr({"id": "emergency" + data[item].priority}).appendTo('#tr' + data[item].priority);
+                                $('<button>').attr({
+                                    'class': "btn btn-danger redFlag",
+                                    'data-eventid': id,
+                                    'data-priority': data[item].priority
+                                }).text("Red flag").appendTo('#emergency' + data[item].priority);
+                                firstE = false;
+                            } else {
+                                $('<button>').attr({
+                                    'class': "btn btn-secondary",
+                                    'data-eventid': id,
+                                    'data-priority': data[item].priority,
+                                    'disabled': "true"
+                                }).text("finish").appendTo('#td' + data[item].priority);
+                            }
+                        } else if (emergencyFlag !== "0" && firstE) {
                             $('<button>').attr({
                                 'class': "btn btn-secondary",
                                 'id' : 'btnFinish',
@@ -360,25 +366,17 @@ function getEvent(e) {
                                 'data-priority': data[item].priority,
                                 'disabled': "true"
                             }).text("finish").appendTo('#td' + data[item].priority);
+                            if (myEvent == 1) {
+                                $('<td>').attr({"id": "emergency" + data[item].priority}).appendTo('#tr' + data[item].priority);
+                                $('<button>').attr({
+                                    'class': "btn btn-warning resolveFlag",
+                                    'data-eventid': id,
+                                    'data-priority': data[item].priority
+                                }).text("Resolve").appendTo('#emergency' + data[item].priority);
+                                firstE = false;
+                            }
                         }
                     }
-                    $('<td>').attr({"id": "emergency" + data[item].priority}).appendTo('#tr' + data[item].priority);
-                    if (emergencyFlag == "0" && firstE) {
-                        $('<button>').attr({
-                            'class': "btn btn-danger redFlag",
-                            'data-eventid': id,
-                            'data-priority': data[item].priority
-                        }).text("Red flag").appendTo('#emergency' + data[item].priority);
-                        firstE = false;
-                    } else if (firstE && emergencyFlag !== "0") {
-                        $('<button>').attr({
-                            'class': "btn btn-warning resolveFlag",
-                            'data-eventid': id,
-                            'data-priority': data[item].priority
-                        }).text("Resolve").appendTo('#emergency' + data[item].priority);
-                        firstE = false;
-                    }
-
                 }
             }
         }
@@ -440,7 +438,7 @@ function ongoingAjaxList() {
 function memberAjaxList() {
     $('#columns2').empty();
     $.ajax({
-        url: "/Members",
+        url: "/Login",
         type: "GET",
         success: memberList,
         error: failureFunction

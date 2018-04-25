@@ -50,6 +50,11 @@ public class DBService {
                         return new Result("Error occured on add Event Route.", null);
                     }
                 }
+                sql = "insert into event_member(event_id, user_id) values((select max(event_id) from event),"+event.getOwnerId()+");";
+                int rsSub = stmt.executeUpdate(sql);
+                if (rsSub != 1) {
+                    return new Result("Error occured on add Event Member.", null);
+                }
                 return new Result("", null);
             } else
                 return new Result("Error occured on add Event.", null);
@@ -140,8 +145,13 @@ public class DBService {
         JSONObject obj = new JSONObject();
 
         try {
-            preparedStatement = conn.prepareStatement("select * from Event where event_id = ?");
+            preparedStatement = conn.prepareStatement("select e.*, case when m.event_id = null then 0 else 1 end is_Join from Event e " +
+                    "left join (select event_id  from event_member where event_id=? and user_id=?) m " +
+                    "on e.event_id = m.event_id " +
+                    "where e.event_id = ?");
             preparedStatement.setInt(1, id);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.setInt(3, id);
             resultSet = preparedStatement.executeQuery();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
             while (resultSet.next()) {
@@ -156,6 +166,7 @@ public class DBService {
                 obj.put("emergencyInfo", resultSet.getString("emergency_info"));
                 obj.put("created", resultSet.getTimestamp("created").toLocalDateTime().format(formatter));
                 obj.put("myEvent", userId == resultSet.getInt("owner_id") ? 1 : 0);
+                obj.put("isJoin", resultSet.getInt("is_Join"));
             }
 
             return obj;
@@ -538,6 +549,7 @@ public class DBService {
     }
 
     public Result login(User user) {
+        conn = connectDB();
         sql = "select * from User where email= ? ";
         try {
             PreparedStatement st = conn.prepareStatement(sql);
