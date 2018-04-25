@@ -300,6 +300,7 @@ function getEvent(e) {
 function getEFlags(data) {
     if(data != null){
         $('#alertEvent').attr({"class":"btn btn-danger btn-lg"});
+        $('.alert1').empty();
         for(let item in data){
             $('<div>').attr({"id": "list" + data[item].eventId}).appendTo(".alert1");
             $('<p>').text("Event name: " + data[item].eventId).appendTo('#list' + data[item].eventId);
