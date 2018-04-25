@@ -28,10 +28,18 @@
           </p>
           <div class="add-event">
               <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>
+              <br/>
+              <label for="file">You can attach the map of the trip:</label>
               <input type="file" id="file" name="file" />
-              <input type="date" id="start" name="start" placeholder="Start Datetime" class="form-control"/>
-              <input type="date" id="end" name="end" placeholder="End Datetime" class="form-control"/>
               <div>
+              <label for="start">Start :</label>
+              <input type="datetime-local" id="start" name="start"/><br/>
+              <label for="end">End :</label>
+              <input type="datetime-local" id="end" name="end"/>
+              </div>
+              <div>
+                  <br/>
+                  <hr/>
                   <input type="text" id="startPosition" name="startPosition" placeholder="Start" class="form-control"/>
                   <input type="text" id="endPosition" name="endPosition" placeholder="End" class="form-control"/>
                   <input type="text" id="duration" name="duration" placeholder="Duration" class="form-control"/>
