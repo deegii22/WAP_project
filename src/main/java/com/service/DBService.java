@@ -324,6 +324,7 @@ public class DBService {
                     "end_date=date_add(sysdate(), interval (select sum(duration) from event_route where event_id=? group by event_id) minute) " +
                     "where event_id=?");
             preparedStatement.setInt(1, eventId);
+            preparedStatement.setInt(2, eventId);
             preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
