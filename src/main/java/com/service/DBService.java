@@ -407,7 +407,7 @@ public class DBService {
             preparedStatement = conn.prepareStatement("select " +
                     "  r.event_id, " +
                     "  CONCAT(start_position, ' -> ', end_position) position, " +
-                    "  u.members, e.emergency_info " +
+                    "  u.members, e.emergency_info, e.name  " +
                     "from event_route r left join event e on r.event_id = e.event_id and r.priority = e.emergency_flag " +
                     "  left join (select " +
                     "               m.event_id, " +
@@ -427,7 +427,7 @@ public class DBService {
                 flag.setEventID(resultSet.getInt("event_id"));
                 flag.setPostion(resultSet.getString("position"));
                 flag.setMembers(resultSet.getString("members"));
-                flag.setInfo(resultSet.getString("emergency_info"));
+                flag.setInfo(resultSet.getString("name"));
                 flags.add(flag);
             }
 

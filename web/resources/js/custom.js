@@ -256,7 +256,7 @@ function failureFunction() {
     console.log("Couldn't load ajax");
 }
 
-/*Added by deegii, show event description in the modal*/
+/*Added by deegii, Enkhee show event description in the modal*/
 function getEvent(e) {
     var id = e.relatedTarget.attributes.getNamedItem('data-eventId').value;
     var type = e.relatedTarget.getAttribute('href');
@@ -390,7 +390,7 @@ function getEFlags(data) {
         $('#alert1').attr({"class": "alert alert-danger", "style":"padding:20px"});
         for (let item in data) {
             $('<p>').attr({"id": "list" + data[item].eventId}).appendTo(".alert1");
-            $('<div>').text("Event name: " + data[item].eventId).appendTo('#list' + data[item].eventId);
+            $('<div>').text("Event name: " + data[item].info).appendTo('#list' + data[item].eventId);
             $('<div>').text("Ride participants: " + data[item].members).appendTo('#list' + data[item].eventId);
             $('<div>').text("Current location: " + data[item].position).appendTo('#list' + data[item].eventId);
         }
@@ -455,6 +455,7 @@ function redflagAjaxList() {
     });
 }
 
+//Enkhee
 function checkFlags() {
     redflagAjaxList();
 }
