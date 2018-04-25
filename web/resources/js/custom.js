@@ -242,6 +242,7 @@ function getEvent(e) {
             $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-warning", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');
             var aa = sessionStorage.getItem("user");
             emergencyFlag= data.emergencyFlag;
+            $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');
         },
     });
 
@@ -310,7 +311,6 @@ function getEFlags(data) {
     } else {
         $('#alertEvent').attr({"class":"btn btn-secondary btn-lg"});
     }
-
 }
 
 function hideEvent() {
