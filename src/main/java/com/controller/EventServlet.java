@@ -41,7 +41,10 @@ public class EventServlet extends HttpServlet {
             switch (action) {
                 case "add":
                     Result res = addEvent(request, userId);
-                    out.print(res.getDesc());
+                    if(res.getDesc().equals(""))
+                        out.print("Event added successfully.");
+                    else
+                        out.print(res.getDesc());
                     break;
                 case "startEvent":
                     id = Integer.parseInt(request.getParameter("id"));
