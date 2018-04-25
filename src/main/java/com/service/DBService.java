@@ -184,6 +184,75 @@ public class DBService {
         return obj;
     }
 
+    //Added by Delgersaikhan - Start
+    public JSONObject[] memberList() {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet rs = null;
+        JSONObject[] objectToReturn = new JSONObject[1];
+        try {
+            sql = "select * from cycling_club.user";
+            rs = stmt.executeQuery(sql);
+            List<User> users = new ArrayList();
+            while (rs.next()) {
+                User user = new User();
+                user.setId(rs.getLong("user_id"));
+                user.setName(rs.getString("name"));
+                user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
+                user.setPhone(rs.getString("phone"));
+                user.setSex(rs.getString("sex"));
+                user.setBirthday(rs.getString("birth_date"));
+                users.add(user);
+            }
+
+            User[] data = users.stream().toArray(User[]::new);
+
+            if(data.length > 0) {
+                JSONObject[] results = new JSONObject[data.length];
+                for(int i = 0; i< data.length; i++) {
+                    JSONObject res = new JSONObject();
+                    res.put("userId", data[i].getId());
+                    res.put("name", data[i].getName());
+                    res.put("sex", data[i].getSex());
+                    res.put("email", data[i].getEmail());
+                    res.put("phone", data[i].getPhone());
+                    res.put("birthday", data[i].getBirthday());
+                    results[i] = res;
+                }
+
+                return  results;
+            }else {
+
+                JSONObject res = new JSONObject();
+                res.put("error", "No results found");
+                objectToReturn[0] = res;
+                return objectToReturn;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return objectToReturn;
+    }
+    //Added by Delgersaikhan - Start
+
+
     /*Added by Enkhee, get event routes*/
     public JSONObject[] eventRoutes(int eventId, Boolean isActive) {
         conn = connectDB();

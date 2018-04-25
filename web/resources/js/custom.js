@@ -16,6 +16,15 @@ $(function (){
         error: failureFunction
     });
 
+    // Added by Delgersaikhan  - Start
+    $.ajax({
+        url: "/Members",
+        type: "GET",
+        success: memberList,
+        error: failureFunction
+    });
+    // Added by Delgersaikhan  - End
+
     var arrRoute = [];
 
     $('#addEvent').click(function () {
@@ -171,6 +180,23 @@ function ongoingList(data) {
         $('<a>').attr({ 'class': "card-link", 'data-toggle':'modal','data-target':'#exampleModalCenter','href':'/Event?action=get?id=' + data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
     }
 }
+
+/*Added by Delgersaikhan, Member list - Start*/
+function memberList(data) {
+    let array = JSON.parse(data);
+
+    for(let i=0; i<array.length; i++){
+        $('<div>').attr({ 'class': "card","id": "card" + i }).appendTo('#columns2');
+        $('<div>').attr({ 'class': "card-body", "id":"card-body" + i}).appendTo('#card' + i);
+        $('<h5>').attr({ 'class': "card-title", "id": "card-title" + i}).text(array[i].name).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Gender: " + array[i].sex).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Email: " + array[i].email).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Phone: " + array[i].phone).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Birthday: " + array[i].birthday).appendTo('#card-body' + i);
+
+    }
+}
+/*Added by Delgersaikhan, Member list - End*/
 
 function failureFunction() {
     console.log("Couldn't load ajax");
