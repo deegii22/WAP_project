@@ -105,6 +105,7 @@ $(function (){
             dataType: 'script'
         }).done(function(data) {
             alert(data);
+            arrRoute = [];
         });
     });
 

@@ -81,7 +81,7 @@
                       <input type="button" id="btnAddRoute" value="Save route" class="btn btn-info"/>
                       <div id="dynamicTable" style="margin-top: 20px"></div>
                   </fieldset>
-                  <input type="submit" id="btnAddEvent" value="Save event" class="btn btn-primary"/>
+                  <input type="button" id="btnAddEvent" value="Save event" class="btn btn-primary"/>
               </form>
           </div>
           <div class="alert alert-danger alert1" role="alert">
