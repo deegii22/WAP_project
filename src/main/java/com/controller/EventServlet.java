@@ -104,9 +104,9 @@ public class EventServlet extends HttpServlet {
             int ownerID = 1;    //session-s awna.
             String name = request.getParameter("eventName");
             String route = request.getParameter("route");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), formatter);
-            LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), formatter);
+            //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm");
+            LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), DateTimeFormatter.ISO_DATE_TIME);
             String urlImg = getImageUrl(request);
             Event event = new Event();
             event.setName(name);
@@ -147,8 +147,9 @@ public class EventServlet extends HttpServlet {
         return "";
     }
     public String uploadFile(Part filePart) throws IOException {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HHmmssSSS");
         LocalDateTime dt = LocalDateTime.now();
-        String dtString = dt.toString();
+        String dtString = dt.format(formatter);
         final String fileName =  dtString + filePart.getSubmittedFileName();
         BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJTPJNGONK2H3N74Q", "skofv8UdMWcxm7PvyDsJztrtCXxUpjqGrKs2wFuR");
         AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
