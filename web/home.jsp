@@ -27,19 +27,59 @@
               <a class="btn btn-primary btn-lg" href='<% if(session.getAttribute("user") != null){ session.setMaxInactiveInterval(1); out.print("login.jsp");} %>' role="button" id="logout">Sign out</a>
           </p>
           <div class="add-event">
-              <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control"/>
-              <input type="file" id="file" name="file" />
-              <input type="date" id="start" name="start" placeholder="Start Datetime" class="form-control"/>
-              <input type="date" id="end" name="end" placeholder="End Datetime" class="form-control"/>
-              <div>
-                  <input type="text" id="startPosition" name="startPosition" placeholder="Start" class="form-control"/>
-                  <input type="text" id="endPosition" name="endPosition" placeholder="End" class="form-control"/>
-                  <input type="text" id="duration" name="duration" placeholder="Duration" class="form-control"/>
-                  <input type="submit" id="btnAddRoute" value="Save route"/>
-                  <div id="dynamicTable">
+              <form class="row">
+                  <div class="col-sm-6">
+                      <div class="form-group row">
+                          <label for="eventName" class="col-sm-4 col-form-label">Event name:</label>
+                          <div class="col-sm-6">
+                            <input type="text" id="eventName" name="eventName" placeholder="Event name" class="form-control" required/>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="file" class="col-sm-4 col-form-label">Event image:</label>
+                          <div class="custom-file col-sm-6">
+                              <input type="file" class="custom-file-input" id="file" name="file"/>
+                              <label class="custom-file-label" for="file">Choose file</label>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="start" class="col-sm-4 col-form-label">Start date:</label>
+                          <div class="col-sm-6">
+                            <input type="date" id="start" name="start" placeholder="Start date" class="form-control" required/>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="end" class="col-sm-4 col-form-label">End date:</label>
+                          <div class="col-sm-6">
+                                <input type="date" id="end" name="end" placeholder="End date" class="form-control" required/>
+                          </div>
+                      </div>
                   </div>
-              </div>
-              <input type="submit" id="btnAddEvent" value="Save event"/>
+                  <fieldset class="form-group col-sm-6">
+                      <legend>Routes</legend>
+                      <div class="form-group row">
+                          <label for="startPosition" class="col-sm-4 col-form-label">Start position:</label>
+                          <div class="col-sm-6">
+                            <input type="text" id="startPosition" name="startPosition" placeholder="Start position" class="form-control" required/>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="endPosition" class="col-sm-4 col-form-label">End position:</label>
+                          <div class="col-sm-6">
+                            <input type="text" id="endPosition" name="endPosition" placeholder="End position" class="form-control" required/>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label for="duration" class="col-sm-4 col-form-label">Duration:</label>
+                          <div class="col-sm-6">
+                            <input type="text" id="duration" name="duration" placeholder="Duration" class="form-control" required/>
+                          </div>
+                      </div>
+                      <input type="button" id="btnAddRoute" value="Save route" class="btn btn-info"/>
+                      <div id="dynamicTable" style="margin-top: 20px"></div>
+                  </fieldset>
+                  <input type="submit" id="btnAddEvent" value="Save event" class="btn btn-primary"/>
+              </form>
           </div>
           <div class="alert alert-danger" role="alert">
               Event name:<br/>

@@ -97,20 +97,20 @@ $(function (){
             endPosition: $("#endPosition").val(),
             duration: $("#duration").val()
         })
-        var table = $("<table/>");
-        var thead = $("<thead/>");
-        var tr = $("<tr/>");
-        tr.append($("<th/>").text("Start position"));
-        tr.append($("<th/>").text("End position"));
-        tr.append($("<th/>").text("Duration"));
+        var table = $("<table>").attr({"class":"table table-dark"});
+        var thead = $("<thead>");
+        var tr = $("<tr>");
+        tr.append($("<th>").text("Start position"));
+        tr.append($("<th>").text("End position"));
+        tr.append($("<th>").text("Duration"));
         thead.append(tr);
         table.append(thead);
-        var tbody = $("<tbody/>");
+        var tbody = $("<tbody>");
         for(var i=0; i<arrRoute.length; i++){
-            tr = $("<tr/>");
-            tr.append($("<td/>").text(arrRoute[i].startPosition));
-            tr.append($("<td/>").text(arrRoute[i].endPosition));
-            tr.append($("<td/>").text(arrRoute[i].duration));
+            tr = $("<tr>");
+            tr.append($("<td>").text(arrRoute[i].startPosition));
+            tr.append($("<td>").text(arrRoute[i].endPosition));
+            tr.append($("<td>").text(arrRoute[i].duration));
             tbody.append(tr);
             table.append(tbody);
         }

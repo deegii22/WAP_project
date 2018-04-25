@@ -7,6 +7,10 @@ body {
 .logo {
     margin-right: 30px;
 }
+.add-event {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
 .add-event, .alert {
     display: none;
     padding: 20px;

@@ -1,10 +1,6 @@
 package com.service;
 
 import com.google.common.hash.Hashing;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import com.model.Event;
 import com.model.EventMember;
 import com.model.EventRoute;
@@ -13,7 +9,6 @@ import com.model.User;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
