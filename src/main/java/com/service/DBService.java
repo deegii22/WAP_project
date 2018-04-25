@@ -282,7 +282,7 @@ public class DBService {
                 for (int i = 0; i < data.length; i++) {
                     JSONObject res = new JSONObject();
                     res.put("eventId", data[i].getEventID());
-                    res.put("startPostion", data[i].getStartPosition());
+                    res.put("startPosition", data[i].getStartPosition());
                     res.put("endPosition", data[i].getEndPosition());
                     res.put("status", data[i].getStatus());
                     res.put("priority", data[i].getPriority());
