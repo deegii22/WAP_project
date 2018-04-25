@@ -228,12 +228,15 @@ function getEvent(e) {
         url: '/Event?action=getAllRoutes&id=' + id,
         type:"GET",
         success: function(data){
-            $('<div>').attr({ 'class': "btn", 'id':"routes"}).text("Routes").appendTo('.modal-body');
+            $('<div>').attr({ 'class': "routes", 'id':"routes"  + id}).text("Routes").appendTo('.modal-body');
+            $('<table>').attr({"class":"table table-dark","id":"table" + id}).appendTo('#routes' + id);
             for (let item in data) {
-                $('<p>').attr({ 'class': "btn"}).text(data[item].startPostion).appendTo('#routes');
-                $('<p>').attr({ 'class': "btn"}).text(data[item].endPostion).appendTo('#routes');
-                $('<p>').attr({ 'class': "btn"}).text(data[item].duration).appendTo('#routes');
-                $('<p>').attr({ 'class': "btn"}).text(data[item].status === 0 ? "upcoming":"finished").appendTo('#routes');
+                $('<tr>').attr({"id": "tr" + data[item].priority}).appendTo('#table' + id);
+                $('<td>').text(data[item].startPosition).appendTo('#tr' + data[item].priority);
+                $('<td>').text(data[item].endPosition).appendTo('#tr' + data[item].priority);
+                $('<td>').text(data[item].duration).appendTo('#tr' + data[item].priority);
+                $('<td>').attr({"id":"td" + id}).appendTo('#tr' + data[item].priority);
+                $('<span>').attr({ 'class': "alert alert-warning"}).text(data[item].status === 0 ? "upcoming":"finished").appendTo('#td' + data[item].priority);
             }
         }
     });
