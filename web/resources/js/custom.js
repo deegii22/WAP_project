@@ -59,6 +59,20 @@ $(function () {
         });
     })
 
+    $(document).on('click', '#btnFinish', function (e) {
+        var eventId = e.target.attributes.getNamedItem('data-eventId').value;
+        var priority = e.target.attributes.getNamedItem('data-priority').value;
+
+        $.ajax({
+            url: '/Event?action=finishRoute&id=' + eventId + '&priority=' + priority,
+            type: "POST",
+            success: function () {
+                $('#exampleModalCenter').modal('hide');
+            },
+            error: failureFunction
+        });
+    })
+
     $(document).on('click', '.resolveFlag', function (e) {
         var eventId = e.target.attributes.getNamedItem('data-eventId').value;
         var priority = e.target.attributes.getNamedItem('data-priority').value;
@@ -187,13 +201,13 @@ function upcomingList(data) {
             "id": "card-title" + data[item].eventId
         }).text(data[item].name).appendTo('#card-body' + data[item].eventId);
         /*$('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);*/
-        $('<p>').attr({'class': "card-text"}).text("Start date: " + data[item].startDate).appendTo('#card-body' + data[item].eventId);
-        $('<p>').attr({'class': "card-text"}).text("End date: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({'class': "card-text"}).text("Start datetime: " + data[item].startDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({'class': "card-text"}).text("End datetime: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
         $('<p>').attr({
             'class': "card-text",
             "id": "card-text" + data[item].eventId
         }).appendTo('#card-body' + data[item].eventId);
-        $('<small>').attr({'class': "text-muted"}).text("Last updated 3 mins ago").appendTo('#card-text' + data[item].eventId);
+        /*$('<small>').attr({'class': "text-muted"}).text("Last updated 3 mins ago").appendTo('#card-text' + data[item].eventId);*/
         $('<a>').attr({
             'class': "card-link",
             'href': '#upcoming',
@@ -220,8 +234,8 @@ function ongoingList(data) {
             "id": "card-title" + data[item].eventId
         }).text(data[item].name).appendTo('#card-body' + data[item].eventId);
         /*$('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);*/
-        $('<div>').attr({'class': "card-text"}).text("Start date: " + data[item].startDate).appendTo('#card-body' + data[item].eventId);
-        $('<div>').attr({'class': "card-text"}).text("End date: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({'class': "card-text"}).text("Start datetime: " + data[item].startDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({'class': "card-text"}).text("End datetime: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
         $('<a>').attr({
             'class': "card-link",
             'href': '#ongoing',
@@ -334,12 +348,14 @@ function getEvent(e) {
                         if (emergencyFlag == "0") {
                             $('<button>').attr({
                                 'class': "btn btn-secondary",
+                                'id' : 'btnFinish',
                                 'data-eventid': id,
                                 'data-priority': data[item].priority
                             }).text("finish").appendTo('#td' + data[item].priority);
                         } else {
                             $('<button>').attr({
                                 'class': "btn btn-secondary",
+                                'id' : 'btnFinish',
                                 'data-eventid': id,
                                 'data-priority': data[item].priority,
                                 'disabled': "true"
@@ -371,16 +387,17 @@ function getEvent(e) {
 
 function getEFlags(data) {
     if (data != null) {
-        $('#alertEvent').attr({"class": "btn btn-danger btn-lg"});
+        $('#alertEvent').attr({"class": "btn btn-danger"});
         $('.alert1').empty();
+        $('#alert1').attr({"class": "alert alert-danger", "style":"padding:20px"});
         for (let item in data) {
-            $('<div>').attr({"id": "list" + data[item].eventId}).appendTo(".alert1");
-            $('<p>').text("Event name: " + data[item].eventId).appendTo('#list' + data[item].eventId);
-            $('<p>').text("Ride participants: " + data[item].members).appendTo('#list' + data[item].eventId);
-            $('<p>').text("Current location: " + data[item].position).appendTo('#list' + data[item].eventId);
+            $('<p>').attr({"id": "list" + data[item].eventId}).appendTo(".alert1");
+            $('<div>').text("Event name: " + data[item].eventId).appendTo('#list' + data[item].eventId);
+            $('<div>').text("Ride participants: " + data[item].members).appendTo('#list' + data[item].eventId);
+            $('<div>').text("Current location: " + data[item].position).appendTo('#list' + data[item].eventId);
         }
     } else {
-        $('#alertEvent').attr({"class": "btn btn-secondary btn-lg"});
+        $('#alertEvent').attr({"class": "btn btn-secondary"});
     }
 }
 
@@ -395,10 +412,10 @@ function upcomingAjaxList() {
 
     $('<div>').attr({"class": "card bg-primary text-white text-center p-3"}).appendTo("#columns");
     $('<blockquote>').attr({"class": "blockquote mb-0"}).appendTo('.card.bg-primary.text-white.text-center.p-3');
-    $('<p>').text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat.").appendTo('.blockquote.mb-0');
+    $('<p>').text("To ride with us, just sign up for Cycling on MIT Club Sports’ website and fill out all the required forms.").appendTo('.blockquote.mb-0');
     $('<footer>').attr({"class": "blockquote-footer"}).appendTo('.blockquote.mb-0');
-    $('<small>').attr({"class": "small"}).text("Someone famous in").appendTo('.blockquote-footer');
-    $('<cite>').attr({"title": "Source Title"}).text("Source Title").appendTo('.small');
+    $('<small>').attr({"class": "small"}).text("Joining the event is ").appendTo('.blockquote-footer');
+    $('<cite>').attr({"title": "Source Title"}).text("easy!").appendTo('.small');
 
     $.ajax({
         url: "/Event?action=upcomingList",

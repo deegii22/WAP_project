@@ -19,15 +19,15 @@
 <div class="container">
   <div class="header">
       <div class="jumbotron">
-          <a class="btn btn-link logout" href='<% if(session.getAttribute("user") != null){ session.setMaxInactiveInterval(1); out.print("login.jsp");} %>' role="button" id="logout">Sign out</a>
+          <a class="btn btn-light logout" href='<% if(session.getAttribute("user") != null){ session.setMaxInactiveInterval(1); out.print("login.jsp");} %>' role="button" id="logout"><i class="fas fa-sign-out-alt"></i>Sign out</a>
           <img src="resources/images/logo.png" width="130px" class="float-left logo">
           <h1 class="display-4">Welcome <span class="user_name"><%=name%></span>, to Cycling Club! </h1>
           <p class="lead">Go ride a bike!</p>
           <hr class="my-4">
-          <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+          <p>The MIT cycling club is an organization dedicated to encouraging the enjoyment of all types of cycling in the MIT community. We welcome members of the MIT community and friends to most of our club events such as group rides, classes, and community service. </p>
           <p class="lead">
-              <a class="btn btn-success btn-lg" href="#" role="button" id="addEvent">Add Event</a>
-              <a class="btn btn-secondary btn-lg" href="#" role="button" id="alertEvent">Red Box</a>
+              <a class="btn btn-success" href="#" role="button" id="addEvent"><i class="fas fa-plus"></i>Add Event</a>
+              <a class="btn btn-secondary" href="#" role="button" id="alertEvent"><i class="fas fa-bell"></i>Red Box</a>
           </p>
           <div class="add-event">
               <form class="row">
@@ -62,15 +62,19 @@
                       <legend>Routes</legend>
                       <div class="form-group row">
                           <label for="startPosLong" class="col-sm-4 col-form-label">Start position:</label>
-                          <div class="col-sm-6">
+                          <div class="col-sm-3">
                               <input type="text" id="startPosLong" name="startPositionLong" class="form-control"/>
+                          </div>
+                          <div class="col-sm-3">
                               <input type="text" id="startPosLat" name="startPositionLat" class="form-control"/>
                           </div>
                       </div>
                       <div class="form-group row">
                           <label for="endPosLong" class="col-sm-4 col-form-label">End position:</label>
-                          <div class="col-sm-6">
+                          <div class="col-sm-3">
                               <input type="text" id="endPosLong" name="endPositionLong" class="form-control"/>
+                          </div>
+                          <div class="col-sm-3">
                               <input type="text" id="endPosLat" name="endPositionLot" class="form-control"/>
                           </div>
                       </div>
@@ -80,13 +84,15 @@
                             <input type="number" id="duration" name="duration" placeholder="Duration" class="form-control"/>
                           </div>
                       </div>
-                      <input type="button" id="btnAddRoute" value="Save route" class="btn btn-info"/>
+                      <input type="button" id="btnAddRoute" value="Save route" class="btn btn-light"/>
                       <div id="dynamicTable" style="margin-top: 20px"></div>
                   </fieldset>
-                  <input type="button" id="btnAddEvent" value="Save event" class="btn btn-primary"/>
               </form>
+              <div class="text-center" >
+                  <input type="button" id="btnAddEvent" value="Save event" class="btn btn-primary"/>
+              </div>
           </div>
-          <div class="alert alert-danger alert1" role="alert">
+          <div class="alert1" role="alert">
 
           </div>
       </div>
