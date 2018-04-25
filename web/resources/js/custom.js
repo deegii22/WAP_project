@@ -50,7 +50,7 @@ $(function (){
     })
 
     $(document).on('click', '#btnStartEvent', function () {
-        var id = $('#btnStartRide').attr('data-eventId')
+        var id = $('#btnStartEvent').attr('data-eventId')
         $.ajax({
             url: '/Event?action=startEvent&id=' + id,
             type:"POST",
