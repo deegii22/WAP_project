@@ -169,7 +169,7 @@ public class EventServlet extends HttpServlet {
             String dtString = dt.format(formatter);
             final String fileName = dtString + filePart.getSubmittedFileName();
             //Creates aws credential via accesskey and secretKey that needs upload to AWS server.
-            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAIR2RYMXBZ2L7WBKA", "lOXd1ayGSpgRV+Qc16YMS0CHYHhjGgxput/U9Q1Q");
+            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAI3H7K3H2QPVJMQNA", "TYZ+KVrxCfatjUuk8w3UwnhY89/RpMKSWEcmOX5J");
             //S3 client with us-east-2 region that connect to AWS server as a client.
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion("us-east-2")
