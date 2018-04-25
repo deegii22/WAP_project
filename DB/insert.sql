@@ -21,3 +21,7 @@ INSERT INTO `User` (`user_id`,`name`,`email`,`password`,`phone`,`sex`,`birth_dat
 INSERT INTO `User` (`user_id`,`name`,`email`,`password`,`phone`,`sex`,`birth_date`,`created`) VALUES (7,'Deegii','deegii@mum.edu','95f4dbc6c4b1c30936a8abc3742e967c21b2d16473829d9f61f80604b7849013','7091225656','Female','1992-03-15','2018-04-24 22:41:14');
 INSERT INTO `User` (`user_id`,`name`,`email`,`password`,`phone`,`sex`,`birth_date`,`created`) VALUES (8,'Enkhee','enkhee@mum.edu','44195a7ffb11a5c8b5e800d5487dda7583b80e3b6a5424883042021f1b1d6f16','5073648600','Male','2000-12-30','2018-04-24 22:42:28');
 INSERT INTO `User` (`user_id`,`name`,`email`,`password`,`phone`,`sex`,`birth_date`,`created`) VALUES (9,'Saikhan','saikhan@mum.edu','da8399778bd70e79405ebbbe8981938f896c88acfb6ef12d22f7b1b36c149508','9760366588','Male','1998-08-06','2018-04-24 22:44:56');
+
+insert Event_member values(1,1);
+insert Event_member values(2,1);
+insert Event_member values(3,1);

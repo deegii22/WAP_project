@@ -43,11 +43,10 @@ public class SignupServlet extends javax.servlet.http.HttpServlet {
 
         if(result.getObj() == null){
             request.setAttribute("signupError", result.getDesc());
+            dispatcher = request.getRequestDispatcher("signup.jsp");
         }else{
-            request.setAttribute("signupSuccess", result.getDesc());
+            dispatcher = request.getRequestDispatcher("login.jsp");
         }
-
-        dispatcher = request.getRequestDispatcher("signup.jsp");
         dispatcher.forward(request, response);
     }
 

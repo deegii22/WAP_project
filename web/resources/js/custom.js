@@ -280,13 +280,13 @@ function getEvent(e) {
                     'id': "btnStartEvent"
                 }).text("Start an event").appendTo('.modal-footer');
             }
-            if (!data.isJoin) {
+            /*if (!data.isJoin) {*/
                 $('<button>').attr({
                     'data-eventId': data.eventId,
                     'class': "btn btn-warning",
                     'id': "btnJoinRide"
                 }).text("Join a ride").appendTo('.modal-footer');
-            }
+            /*}*/
             emergencyFlag = data.emergencyFlag;
             myEvent = data.myEvent;
         },

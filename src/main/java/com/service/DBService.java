@@ -44,13 +44,13 @@ public class DBService {
             if (rs == 1) {
                 for (EventRoute e : event.getRoutes()) {
                     sql = "insert into Event_route (event_id, start_position, end_position, status, priority, duration)\n" +
-                            "    values ((select max(event_id) from event), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
+                            "    values ((select max(event_id) from Event), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
                     int rsSub = stmt.executeUpdate(sql);
                     if (rsSub != 1) {
                         return new Result("Error occured on add Event Route.", null);
                     }
                 }
-                sql = "insert into Event_member(event_id, user_id) values((select max(event_id) from event),"+event.getOwnerId()+");";
+                sql = "insert into Event_member(event_id, user_id) values((select max(event_id) from Event),"+event.getOwnerId()+");";
                 int rsSub = stmt.executeUpdate(sql);
                 if (rsSub != 1) {
                     return new Result("Error occured on add Event Member.", null);
@@ -146,7 +146,7 @@ public class DBService {
 
         try {
             preparedStatement = conn.prepareStatement("select e.*, case when m.event_id = null then 0 else 1 end is_Join from Event e " +
-                    "left join (select event_id  from event_member where event_id=? and user_id=?) m " +
+                    "left join (select event_id  from Event_member where event_id=? and user_id=?) m " +
                     "on e.event_id = m.event_id " +
                     "where e.event_id = ?");
             preparedStatement.setInt(1, id);
@@ -199,7 +199,7 @@ public class DBService {
         ResultSet rs = null;
         JSONObject[] objectToReturn = new JSONObject[1];
         try {
-            sql = "select * from cycling_club.user";
+            sql = "select * from cycling_club.User";
             rs = stmt.executeQuery(sql);
             List<User> users = new ArrayList();
             while (rs.next()) {
@@ -335,7 +335,7 @@ public class DBService {
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = conn.prepareStatement("update Event set status=1, start_date=sysdate(), " +
-                    "end_date=date_add(sysdate(), interval (select sum(duration) from event_route where event_id=? group by event_id) minute) " +
+                    "end_date=date_add(sysdate(), interval (select sum(duration) from Event_route where event_id=? group by event_id) minute) " +
                     "where event_id=?");
             preparedStatement.setInt(1, eventId);
             preparedStatement.setInt(2, eventId);
@@ -414,7 +414,7 @@ public class DBService {
                     "               GROUP_CONCAT(u.name SEPARATOR ', ') members " +
                     "             from " +
                     "               Event_member m, " +
-                    "               user u " +
+                    "               User u " +
                     "             where " +
                     "               m.user_id = u.user_id " +
                     "             group by " +
