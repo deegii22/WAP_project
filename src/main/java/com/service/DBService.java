@@ -65,7 +65,7 @@ public class DBService {
         ResultSet resultSet = null;
         JSONObject[] objectToReturn = new JSONObject[1];
         try {
-            preparedStatement = conn.prepareStatement("select * from Event where status = ?");
+            preparedStatement = conn.prepareStatement("select * from Event where status = ? order by created desc");
             preparedStatement.setInt(1, type);
             resultSet = preparedStatement.executeQuery();
             List<Event> events = new ArrayList();
