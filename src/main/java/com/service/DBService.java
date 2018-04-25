@@ -433,10 +433,10 @@ public class DBService {
                 return results;
             }
 
-            JSONObject res = new JSONObject();
+            /*JSONObject res = new JSONObject();
             res.put("error", "No results found");
-            objectToReturn[0] = res;
-            return objectToReturn;
+            objectToReturn[0] = res;*/
+            return null;
 
         } catch (Exception e) {
             e.printStackTrace();

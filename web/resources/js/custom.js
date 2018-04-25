@@ -5,6 +5,7 @@ $(function (){
     upcomingAjaxList();
     ongoingAjaxList();
     memberAjaxList();
+    redflagAjaxList();
 
     var arrRoute = [];
 
@@ -38,6 +39,17 @@ $(function (){
                 upcomingAjaxList();
                 ongoingAjaxList();
             },
+            error: failureFunction
+        });
+    })
+
+    $(document).on('click','#redFlag', function () {
+        var eventId = $('#redFlag').attr('data-eventId');
+        var priority = $('#redFlag').attr('data-priority');
+        $.ajax({
+            url: '/Event?action=setEFlag&id=' + eventId + '&priority=' + priority + '&info=' + "",
+            type:"POST",
+            success: redflagAjaxList,
             error: failureFunction
         });
     })
@@ -85,11 +97,16 @@ $(function (){
             data: form_data,
             processData: false,
             contentType: false,
-            dataType: 'script'
-        }).done(function(data) {
-            alert(data);
-            arrRoute = [];
-        });
+            dataType: 'script',
+            complete: function (data) {
+                alert(data);
+                arrRoute = [];
+            },
+            success: function (){
+                $('.add-event').toggle();
+                upcomingAjaxList();
+            }
+        })
     });
 
     $("#btnAddRoute").click(function(){
@@ -212,14 +229,14 @@ function getEvent(e) {
         type:"GET",
         success: function(data){
             $('<div>').attr({ 'class': "routes", 'id':"routes"  + id}).text("Routes").appendTo('.modal-body');
-            $('<table>').attr({"class":"table table-dark","id":"table" + id}).appendTo('#routes' + id);
+            $('<table>').attr({"class":"table table-bordered","id":"table" + id}).appendTo('#routes' + id);
             for (let item in data) {
                 $('<tr>').attr({"id": "tr" + data[item].priority}).appendTo('#table' + id);
                 $('<td>').text(data[item].startPosition).appendTo('#tr' + data[item].priority);
                 $('<td>').text(data[item].endPosition).appendTo('#tr' + data[item].priority);
                 $('<td>').text(data[item].duration).appendTo('#tr' + data[item].priority);
                 $('<td>').attr({"id":"td" + data[item].priority}).appendTo('#tr' + data[item].priority);
-                $('<span>').attr({ 'class': "alert alert-warning"}).text(data[item].status === 0 ? "upcoming":"finished").appendTo('#td' + data[item].priority);
+                $('<a>').attr({ 'class': "alert alert-warning",'id': 'redFlag','data-eventid': id, 'data-priority': data[item].priority}).text(data[item].status === 0 ? "Red flag":"finished").appendTo('#td' + data[item].priority);
             }
         }
     });
@@ -237,6 +254,14 @@ function getEvent(e) {
     });
 }
 
+function getEFlags(data) {
+    console.log(data);
+    if(data != null){
+        $('#alertEvent').attr({"class":"btn btn-danger"});
+    }
+
+}
+
 function hideEvent() {
     $('#exampleModalLongTitle').empty()
     $('.modal-body').empty()
@@ -244,6 +269,7 @@ function hideEvent() {
 
 /*Added by Deegii*/
 function upcomingAjaxList() {
+    $('#columns').empty();
     $.ajax({
         url: "/Event?action=upcomingList",
         type: "GET",
@@ -254,6 +280,7 @@ function upcomingAjaxList() {
 
 /*Added by Deegii*/
 function ongoingAjaxList() {
+    $('#columns1').empty();
     $.ajax({
         url: "/Event?action=ongoingList",
         type: "GET",
@@ -264,10 +291,21 @@ function ongoingAjaxList() {
 
 // Added by Delgersaikhan  - Start
 function memberAjaxList(){
+    $('#columns2').empty();
     $.ajax({
         url: "/Members",
         type: "GET",
         success: memberList,
+        error: failureFunction
+    });
+}
+
+/*Added by Deegii*/
+function redflagAjaxList() {
+    $.ajax({
+        url: "/Event?action=getEFlags",
+        type: "GET",
+        success: getEFlags,
         error: failureFunction
     });
 }
