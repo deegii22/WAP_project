@@ -538,6 +538,7 @@ public class DBService {
     }
 
     public Result login(User user) {
+        conn = connectDB();
         sql = "select * from User where email= ? ";
         try {
             PreparedStatement st = conn.prepareStatement(sql);

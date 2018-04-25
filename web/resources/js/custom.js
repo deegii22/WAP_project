@@ -420,7 +420,7 @@ function ongoingAjaxList() {
 function memberAjaxList() {
     $('#columns2').empty();
     $.ajax({
-        url: "/Members",
+        url: "/Login",
         type: "GET",
         success: memberList,
         error: failureFunction
