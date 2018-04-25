@@ -183,17 +183,14 @@ function ongoingList(data) {
 
 /*Added by Delgersaikhan, Member list - Start*/
 function memberList(data) {
-    let array = JSON.parse(data);
-
-    for(let i=0; i<array.length; i++){
-        $('<div>').attr({ 'class': "card","id": "card" + i }).appendTo('#columns2');
-        $('<div>').attr({ 'class': "card-body", "id":"card-body" + i}).appendTo('#card' + i);
-        $('<h5>').attr({ 'class': "card-title", "id": "card-title" + i}).text(array[i].name).appendTo('#card-body' + i);
-        $('<div>').attr({ 'class': "card-text" }).text("Gender: " + array[i].sex).appendTo('#card-body' + i);
-        $('<div>').attr({ 'class': "card-text" }).text("Email: " + array[i].email).appendTo('#card-body' + i);
-        $('<div>').attr({ 'class': "card-text" }).text("Phone: " + array[i].phone).appendTo('#card-body' + i);
-        $('<div>').attr({ 'class': "card-text" }).text("Birthday: " + array[i].birthday).appendTo('#card-body' + i);
-
+    for (let item in data){
+        $('<div>').attr({ 'class': "card","id": "member" + data[item].userId }).appendTo('#columns2');
+        $('<div>').attr({ 'class': "card-body", "id":"member-body" + data[item].userId}).appendTo('#member' + data[item].userId);
+        $('<h5>').attr({ 'class': "card-title", "id": "member-title" + data[item].userId}).text(data[item].name).appendTo('#member-body' + data[item].userId);
+        $('<div>').attr({ 'class': "card-text" }).text("Gender: " + data[item].sex).appendTo('#member-body' + data[item].userId);
+        $('<div>').attr({ 'class': "card-text" }).text("Email: " + data[item].email).appendTo('#member-body' + data[item].userId);
+        $('<div>').attr({ 'class': "card-text" }).text("Phone: " + data[item].phone).appendTo('#member-body' + data[item].userId);
+        $('<div>').attr({ 'class': "card-text" }).text("Birthday: " + data[item].birthday).appendTo('#member-body' + data[item].userId);
     }
 }
 /*Added by Delgersaikhan, Member list - End*/

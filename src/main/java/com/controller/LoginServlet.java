@@ -28,7 +28,10 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
         if(result.getObj() != null){
             //Create session object if it is already not created.
             User currentUser = (User) result.getObj();
-            HttpSession session = request.getSession(true);
+            HttpSession session = request.getSession(false);
+            if(session == null){    //Not created yet.
+                session = request.getSession();
+            }
             session.setAttribute("user", currentUser);
             ServletContext sc =  getServletContext();
             sc.setAttribute("userid", currentUser.getId());
