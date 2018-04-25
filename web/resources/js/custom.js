@@ -152,7 +152,7 @@ function upcomingList(data) {
     for (let item in data) {
         $('<div>').attr({ 'class': "card","id": "card" + data[item].eventId }).appendTo('#columns');
         if(data[item].img != ""){
-            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('.card');
+            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('#card'+ data[item].eventId );
         }
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
@@ -170,7 +170,7 @@ function ongoingList(data) {
     for (let item in data) {
         $('<div>').attr({ 'class': "card","id": "card" + data[item].eventId }).appendTo('#columns1');
         if(data[item].img != ""){
-            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('.card');
+            $('<img>').attr({ 'class': "card-img-top", 'src': data[item].img}).appendTo('#card'+ data[item].eventId );
         }
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
@@ -210,7 +210,6 @@ function getEvent(e) {
         type:"GET",
         success: function(data){
             $('#exampleModalLongTitle').append(data.name);
-            data.img = 'resources/images/logo.png';
             if(data.img != ""){
                 $('.modal-body').append($('<img>').attr({"src": data.img, "style":"width:100%"}));
             }
