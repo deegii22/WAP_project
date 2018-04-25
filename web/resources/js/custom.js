@@ -23,7 +23,9 @@ $(function () {
         $.ajax({
             url: '/Event?action=joinEvent&id=' + id,
             type: "POST",
-            //success: upcomingList,
+            success: function () {
+                $('#exampleModalCenter').modal('hide');
+            },
             error: failureFunction
         });
     })
@@ -283,11 +285,6 @@ function getEvent(e) {
             }).text("Join a ride").appendTo('.modal-footer');
             var aa = sessionStorage.getItem("user");
             emergencyFlag = data.emergencyFlag;
-            $('<button>').attr({
-                'data-eventId': data.eventId,
-                'class': "btn btn-primary",
-                'id': "btnJoinRide"
-            }).text("Join a ride").appendTo('.modal-footer');
         },
     });
 
@@ -317,7 +314,9 @@ function getEvent(e) {
             $('<th>').text("Start position").appendTo('.theadMembers');
             $('<th>').text("End position").appendTo('.theadMembers');
             $('<th>').text("Duration").appendTo('.theadMembers');
-            $('<th colspan="2">').text("Status").appendTo('.theadMembers');
+            if (type != "#upcoming") {
+                $('<th colspan="2">').text("Status").appendTo('.theadMembers');
+            }
             var firstE = true;
             for (let item in data) {
                 $('<tr>').attr({"id": "tr" + data[item].priority}).appendTo('#table' + id);
