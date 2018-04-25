@@ -37,7 +37,10 @@ $(function (){
         $.ajax({
             url: '/Event?action=startEvent&id=' + id,
             type:"POST",
-            //success: upcomingList,
+            success: function () {
+                upcomingAjaxList();
+                ongoingAjaxList();
+            },
             error: failureFunction
         });
     })
