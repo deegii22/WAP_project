@@ -121,7 +121,10 @@ public class EventServlet extends HttpServlet {
             //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm");
             LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), DateTimeFormatter.ISO_DATE_TIME);
-            String urlImg = getImageUrl(request);
+            Result res1 = getImageUrl(request);
+            if(!res1.getDesc().equals(""))
+                return res1;
+            String urlImg = String.valueOf(res1.getObj());
             Event event = new Event();
             event.setOwnerId(userid);
             event.setName(name);
@@ -145,30 +148,30 @@ public class EventServlet extends HttpServlet {
         }
     }
     //This is main function to check file extensions and call upload.
-    public String getImageUrl(HttpServletRequest req) throws IOException, ServletException {
+    public Result getImageUrl(HttpServletRequest req) throws IOException, ServletException {
         try {
             Part filePart = req.getPart("file");
             final String fileName = filePart.getSubmittedFileName();
             //Security check we must upload only images.
             if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
-                final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+                final String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
                 String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
                 for (String s : allowedExt) {
                     if (extension.equals(s)) {
                         return this.uploadFile(filePart);
                     }
                 }
-                return "File must be an image.";
+                return new Result("File must be an image.", null);
             }
             else
-                return "Invalid file name.";
+                return new Result("Invalid file name.", null);
         }
         catch (Exception ex){
-            return ex.getMessage();
+            return new Result(ex.getMessage(), null);
         }
     }
     //This function upload to AWS server
-    public String uploadFile(Part filePart) throws IOException {
+    public Result uploadFile(Part filePart) throws IOException {
         try {
             //Creates file name. It's possible that files with same names are uploaded.
             //We  should create unique names. /Unique enough/
@@ -177,7 +180,7 @@ public class EventServlet extends HttpServlet {
             String dtString = dt.format(formatter);
             final String fileName = dtString + filePart.getSubmittedFileName();
             //Creates aws credential via accesskey and secretKey that needs upload to AWS server.
-            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAI3H7K3H2QPVJMQNA", "TYZ+KVrxCfatjUuk8w3UwnhY89/RpMKSWEcmOX5J");
+            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAIJ2BJZJN37KOCTNQ", "2uyv4jlIQaFcSwiM7+4dCp7GQ70vtuJmmdYTOA/r");
             //S3 client with us-east-2 region that connect to AWS server as a client.
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion("us-east-2")
@@ -196,7 +199,7 @@ public class EventServlet extends HttpServlet {
                     out.write(bytes, 0, read);
                 }
             } catch (FileNotFoundException fne) {
-                return fne.getMessage();
+                return new Result(fne.getMessage(),"");
             } finally {
                 if (out != null) {
                     out.close();
@@ -211,14 +214,14 @@ public class EventServlet extends HttpServlet {
                         + fileName);
                 s3Client.putObject(new PutObjectRequest(
                         "wapbucket", fileName, file));
-                return s3Client.getUrl("wapbucket", fileName).toString();
+                return new Result("", s3Client.getUrl("wapbucket", fileName).toString());
 
             } catch (AmazonServiceException ase) {
-                return ase.getMessage();
+                return new Result(ase.getMessage(),null);
             }
         }
         catch (Exception ex){
-            return ex.getMessage();
+            return new Result(ex.getMessage(),null);
         }
     }
 }
