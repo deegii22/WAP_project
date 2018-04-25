@@ -1,13 +1,11 @@
 "use strict";
 
 $(function (){
-
     upcomingAjaxList();
 
     ongoingAjaxList();
 
     memberAjaxList();
-
     var arrRoute = [];
 
     $('#addEvent').click(function () {
@@ -86,16 +84,21 @@ $(function (){
             processData: false,
             contentType: false,
             dataType: 'script'
-        }).done(function(data) {
-            alert(data);
-            arrRoute = [];
-        });
+            }).done(function(data) {
+                alert(data);
+                arrRoute = [];
+                upcomingAjaxList();
+                $('.add-event').toggle();
+                $('#eventName').val("");
+                $('#start').val("");
+                $('#end').val("");
+            });
     });
 
     $("#btnAddRoute").click(function(){
         arrRoute.push({
-            startPosition: $("#startPosition").val(),
-            endPosition: $("#endPosition").val(),
+            startPosition: $("#startPosLong").val()+", "+$("#startPosLong").val(),
+            endPosition: $("#endPosLong").val()+", "+$("#endPosLat").val(),
             duration: $("#duration").val()
         })
         var table = $("<table>").attr({"class":"table table-dark"});
@@ -117,8 +120,10 @@ $(function (){
         }
         $("#dynamicTable").empty();
         $("#dynamicTable").append(table);
-        $("#startPosition").val("");
-        $("#endPosition").val("");
+        $("#startPosLong").val("");
+        $("#startPosLat").val("");
+        $("#endPosLong").val("");
+        $("#endPosLat").val("");
         $("#duration").val("");
     });
 });

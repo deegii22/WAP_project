@@ -69,7 +69,7 @@ public class EventServlet extends HttpServlet {
                     break;
             }
         } catch (Exception ex) {
-            out.print("Sdarara");
+            out.print(ex.getMessage());
         }
     }
 
@@ -137,7 +137,7 @@ public class EventServlet extends HttpServlet {
             JSONArray json = (JSONArray) parser.parse(route);
             for (int i = 0; i < json.size(); i++) {
                 EventRoute eRoute = new EventRoute();
-                eRoute.setPriority(i);
+                eRoute.setPriority(i+1);
                 eRoute.setStartPosition((String) ((JSONObject) json.get(0)).get("startPosition"));
                 eRoute.setEndPosition((String) ((JSONObject) json.get(0)).get("endPosition"));
                 eRoute.setDuration(Integer.parseInt((String) ((JSONObject) json.get(0)).get("duration")));

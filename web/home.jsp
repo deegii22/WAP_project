@@ -61,21 +61,23 @@
                   <fieldset class="form-group col-sm-6">
                       <legend>Routes</legend>
                       <div class="form-group row">
-                          <label for="startPosition" class="col-sm-4 col-form-label">Start position:</label>
+                          <label for="startPosLong" class="col-sm-4 col-form-label">Start position:</label>
                           <div class="col-sm-6">
-                            <input type="text" id="startPosition" name="startPosition" placeholder="Start position" class="form-control"/>
+                              <input type="text" id="startPosLong" name="startPositionLong" class="form-control"/>
+                              <input type="text" id="startPosLat" name="startPositionLat" class="form-control"/>
                           </div>
                       </div>
                       <div class="form-group row">
-                          <label for="endPosition" class="col-sm-4 col-form-label">End position:</label>
+                          <label for="endPosLong" class="col-sm-4 col-form-label">End position:</label>
                           <div class="col-sm-6">
-                            <input type="text" id="endPosition" name="endPosition" placeholder="End position" class="form-control"/>
+                              <input type="text" id="endPosLong" name="endPositionLong" class="form-control"/>
+                              <input type="text" id="endPosLat" name="endPositionLot" class="form-control"/>
                           </div>
                       </div>
                       <div class="form-group row">
                           <label for="duration" class="col-sm-4 col-form-label">Duration:</label>
                           <div class="col-sm-6">
-                            <input type="text" id="duration" name="duration" placeholder="Duration" class="form-control"/>
+                            <input type="number" id="duration" name="duration" placeholder="Duration" class="form-control"/>
                           </div>
                       </div>
                       <input type="button" id="btnAddRoute" value="Save route" class="btn btn-info"/>
