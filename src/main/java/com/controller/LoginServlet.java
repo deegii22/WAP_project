@@ -5,6 +5,7 @@ import com.service.DBService;
 import com.service.Result;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
@@ -26,8 +27,11 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
 
         if(result.getObj() != null){
             //Create session object if it is already not created.
+            User currentUser = (User) result.getObj();
             HttpSession session = request.getSession(true);
-            session.setAttribute("user", (User) result.getObj());
+            session.setAttribute("user", currentUser);
+            ServletContext sc =  getServletContext();
+            sc.setAttribute("userid", currentUser.getId());
             dispatcher = request.getRequestDispatcher("home.jsp");
         }else{
             request.setAttribute("loginError", result.getDesc());
