@@ -40,7 +40,7 @@ public class EventServlet extends HttpServlet {
             int id = 0;
             switch (action) {
                 case "add":
-                    Result res = addEvent(request);
+                    Result res = addEvent(request, userId);
                     out.print(res.getDesc());
                     break;
                 case "startEvent":
@@ -101,9 +101,10 @@ public class EventServlet extends HttpServlet {
         out.flush();
     }
 
-    private Result addEvent(HttpServletRequest request) {
+    //This is addEvent function that receive HTTPServletRequest and instantiate Event model and
+    //save route image to AWS and save to the DB.
+    private Result addEvent(HttpServletRequest request, int userid) {
         try {
-            int ownerID = 1;    //session-s awna.
             String name = request.getParameter("name");
             String route = request.getParameter("route");
             //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm");
@@ -111,10 +112,12 @@ public class EventServlet extends HttpServlet {
             LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), DateTimeFormatter.ISO_DATE_TIME);
             String urlImg = getImageUrl(request);
             Event event = new Event();
+            event.setOwnerId(userid);
             event.setName(name);
             event.setRoute(urlImg);
             event.setStartDate(start);
             event.setEndDate(end);
+            //event route is the JSON array and we convert to EventRoute model and add Event model.
             JSONParser parser = new JSONParser();
             JSONArray json = (JSONArray) parser.parse(route);
             for (int i = 0; i < json.size(); i++) {
@@ -125,17 +128,17 @@ public class EventServlet extends HttpServlet {
                 eRoute.setDuration(Integer.parseInt((String) ((JSONObject) json.get(0)).get("duration")));
                 event.addRoute(eRoute);
             }
-
             return db.AddEvent(event);
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
         }
     }
-
+    //This is main function to check file extensions and call upload.
     public String getImageUrl(HttpServletRequest req) throws IOException, ServletException {
         try {
             Part filePart = req.getPart("file");
             final String fileName = filePart.getSubmittedFileName();
+            //Security check we must upload only images.
             if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
                 final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
                 String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
@@ -164,11 +167,12 @@ public class EventServlet extends HttpServlet {
             final String fileName = dtString + filePart.getSubmittedFileName();
             //Creates aws credential via accesskey and secretKey that needs upload to AWS server.
             BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJTPJNGONK2H3N74Q", "skofv8UdMWcxm7PvyDsJztrtCXxUpjqGrKs2wFuR");
-            //S3 client that 
+            //S3 client with us-east-2 region that connect to AWS server as a client.
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion("us-east-2")
                     .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
                     .build();
+            //Ajax sent to servlet file as a FilePart and converted to File.
             InputStream inputStream = filePart.getInputStream();
             OutputStream out = null;
             try {
@@ -181,7 +185,7 @@ public class EventServlet extends HttpServlet {
                     out.write(bytes, 0, read);
                 }
             } catch (FileNotFoundException fne) {
-
+                return fne.getMessage();
             } finally {
                 if (out != null) {
                     out.close();
@@ -191,7 +195,7 @@ public class EventServlet extends HttpServlet {
                 }
             }
             try {
-                System.out.println("Uploading a new object to S3 from a file\n");
+                //Here is uploading file to bucket and get url of the file on AWS.
                 File file = new File(getServletContext().getRealPath("/")
                         + fileName);
                 s3Client.putObject(new PutObjectRequest(
