@@ -4,14 +4,12 @@ import com.google.common.hash.Hashing;
 import com.model.Event;
 import com.model.EventMember;
 import com.model.EventRoute;
+import com.model.*;
 import org.json.simple.JSONObject;
-import com.model.User;
-
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
 
 public class DBService {
 
@@ -248,7 +246,6 @@ public class DBService {
     }
     //Added by Delgersaikhan - Start
 
-
     /*Added by Enkhee, get event routes*/
     public JSONObject[] eventRoutes(int eventId, Boolean isActive) {
         conn = connectDB();
@@ -350,14 +347,14 @@ public class DBService {
     }
 
     /*Added by Enkhee, join Event*/
-    public void joinEvent(int eventId, int userId) {
+    public void joinEvent(int eventId, long userId) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         try {
             preparedStatement = conn.prepareStatement("insert into event_member(event_id, user_id) values(?,?)");
             preparedStatement.setInt(1, eventId);
-            preparedStatement.setInt(2, userId);
+            preparedStatement.setLong(2, userId);
             resultSet = preparedStatement.executeQuery();
         } catch (Exception e) {
             e.printStackTrace();
@@ -407,6 +404,79 @@ public class DBService {
                 }
             }
         }
+    }
+
+    /*Added by Enkhee, get emergency flags*/
+    public JSONObject[] getEFlags() {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        JSONObject[] objectToReturn = new JSONObject[1];
+        try {
+            preparedStatement = conn.prepareStatement("select " +
+                    "  r.event_id, " +
+                    "  CONCAT(start_position, ' -> ', end_position) position, " +
+                    "  u.members " +
+                    "from event_route r left join event e on r.event_id = e.event_id and r.priority = e.emergency_flag " +
+                    "  left join (select " +
+                    "               m.event_id, " +
+                    "               GROUP_CONCAT(u.name SEPARATOR ', ') members " +
+                    "             from " +
+                    "               event_member m, " +
+                    "               user u " +
+                    "             where " +
+                    "               m.user_id = u.user_id " +
+                    "             group by " +
+                    "               m.event_id) u on r.event_id = u.event_id " +
+                    "where e.emergency_flag > 0");
+            resultSet = preparedStatement.executeQuery();
+            List<EFlag> flags = new ArrayList();
+            while (resultSet.next()) {
+                EFlag flag = new EFlag();
+                flag.setEventID(resultSet.getInt("event_id"));
+                flag.setPostion(resultSet.getString("position"));
+                flag.setMembers(resultSet.getString("members"));
+                flags.add(flag);
+            }
+
+            EFlag[] data = flags.stream().toArray(EFlag[]::new);
+
+            if (data.length > 0) {
+                JSONObject[] results = new JSONObject[data.length];
+                for (int i = 0; i < data.length; i++) {
+                    JSONObject res = new JSONObject();
+                    res.put("eventId", data[i].getEventID());
+                    res.put("position", data[i].getPostion());
+                    res.put("members", data[i].getMembers());
+                    results[i] = res;
+                }
+                return results;
+            }
+
+            JSONObject res = new JSONObject();
+            res.put("error", "No results found");
+            objectToReturn[0] = res;
+            return objectToReturn;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return objectToReturn;
     }
 
     /*Added by Enkhee, get event members*/
@@ -468,6 +538,37 @@ public class DBService {
         return objectToReturn;
     }
 
+    /*Added by Enkhee, create emergency flags*/
+    public void updateEFlag(int eventId, int routePriority, String info) {
+        conn = connectDB();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            preparedStatement = conn.prepareStatement("update event set emergency_flag=?, emergency_info=? where event_id=?");
+            preparedStatement.setInt(1, routePriority);
+            preparedStatement.setString(2, info);
+            preparedStatement.setInt(3, eventId);
+            resultSet = preparedStatement.executeQuery();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (preparedStatement != null) {
+                try {
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public Result login(User user) {
         sql = "select * from User where email= ? ";
         try {
@@ -501,8 +602,7 @@ public class DBService {
         }
         return new Result("Invalid Username or password", null);
     }
-
-
+    
     public Result addUser(User user) {
         String existCheckSQL = "select name from User where email= ?";
 

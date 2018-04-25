@@ -34,10 +34,10 @@ public class EventServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         ServletContext sc = getServletContext();
         Integer userId = Integer.parseInt(String.valueOf(sc.getAttribute("userid")));
-
         try {
             String action = request.getParameter("action");
             int id = 0;
+            int priority = 0;
             switch (action) {
                 case "add":
                     Result res = addEvent(request, userId);
@@ -52,13 +52,18 @@ public class EventServlet extends HttpServlet {
                     break;
                 case "joinEvent":
                     id = Integer.parseInt(request.getParameter("id"));
-                    int user = (int) request.getSession().getAttribute("user");
-                    db.joinEvent(id, user);
+                    db.joinEvent(id, userId);
                     break;
                 case "finishRoute":
                     id = Integer.parseInt(request.getParameter("id"));
-                    int priority = Integer.parseInt(request.getParameter("priority"));
+                    priority = Integer.parseInt(request.getParameter("priority"));
                     db.finishRoute(id, priority);
+                    break;
+                case "setEFlag":
+                    id = Integer.parseInt(request.getParameter("id"));
+                    priority = Integer.parseInt(request.getParameter("priority"));
+                    String info = request.getParameter("info");
+                    db.updateEFlag(id, priority, info);
                     break;
                 default:
                     break;
@@ -97,6 +102,9 @@ public class EventServlet extends HttpServlet {
             case "getMembers":
                 id = Integer.parseInt(request.getParameter("id"));
                 out.print(Arrays.toString(db.eventMembers(id)));
+                break;
+            case "getEFlags":
+                out.print(Arrays.toString(db.getEFlags()));
                 break;
             default:
                 break;
