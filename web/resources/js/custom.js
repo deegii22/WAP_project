@@ -3,9 +3,7 @@
 $(function (){
 
     upcomingAjaxList();
-
     ongoingAjaxList();
-
     memberAjaxList();
 
     var arrRoute = [];
@@ -19,7 +17,6 @@ $(function (){
     });
 
     $('#exampleModalCenter').on('shown.bs.modal', getEvent);
-
     $('#exampleModalCenter').on('hidden.bs.modal', hideEvent);
 
     $(document).on('click', '#btnJoinRide', function () {
