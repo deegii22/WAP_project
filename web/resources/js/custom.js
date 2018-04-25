@@ -332,11 +332,20 @@ function getEvent(e) {
                             'data-priority': data[item].priority
                         }).text("finished").appendTo('#td' + data[item].priority);
                     } else {
-                        $('<button>').attr({
-                            'class': "btn btn-secondary",
-                            'data-eventid': id,
-                            'data-priority': data[item].priority
-                        }).text("finish").appendTo('#td' + data[item].priority);
+                        if (emergencyFlag == "0") {
+                            $('<button>').attr({
+                                'class': "btn btn-secondary",
+                                'data-eventid': id,
+                                'data-priority': data[item].priority
+                            }).text("finish").appendTo('#td' + data[item].priority);
+                        } else {
+                            $('<button>').attr({
+                                'class': "btn btn-secondary",
+                                'data-eventid': id,
+                                'data-priority': data[item].priority,
+                                'disabled': "true"
+                            }).text("finish").appendTo('#td' + data[item].priority);
+                        }
                     }
                     $('<td>').attr({"id": "emergency" + data[item].priority}).appendTo('#tr' + data[item].priority);
                     if (emergencyFlag == "0" && firstE) {
@@ -346,12 +355,13 @@ function getEvent(e) {
                             'data-priority': data[item].priority
                         }).text("Red flag").appendTo('#emergency' + data[item].priority);
                         firstE = false;
-                    } else if(firstE) {
+                    } else if (firstE && emergencyFlag !== "0") {
                         $('<button>').attr({
                             'class': "btn btn-warning resolveFlag",
                             'data-eventid': id,
                             'data-priority': data[item].priority
                         }).text("Resolve").appendTo('#emergency' + data[item].priority);
+                        firstE = false;
                     }
 
                 }
