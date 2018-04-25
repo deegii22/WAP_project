@@ -4,6 +4,7 @@ public class EFlag {
     private long eventID;
     private String postion;
     private String members;
+    private String info;
 
     public long getEventID() {
         return eventID;
@@ -27,5 +28,13 @@ public class EFlag {
 
     public void setMembers(String members) {
         this.members = members;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 }
