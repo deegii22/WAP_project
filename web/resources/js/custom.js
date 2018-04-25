@@ -138,6 +138,7 @@ $(function (){
         $("#endPosLat").val("");
         $("#duration").val("");
     });
+    setInterval(checkFlags, 3000);
 });
 
 function showSignUpPage(){
@@ -308,4 +309,8 @@ function redflagAjaxList() {
         success: getEFlags,
         error: failureFunction
     });
+}
+
+function checkFlags(){
+    redflagAjaxList();
 }
