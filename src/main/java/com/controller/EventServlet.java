@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 @WebServlet("/Event")
-@MultipartConfig
+@MultipartConfig(maxFileSize=1024*1024*30)
 public class EventServlet extends HttpServlet {
     DBService db = new DBService();
 
@@ -152,7 +152,12 @@ public class EventServlet extends HttpServlet {
     public Result getImageUrl(HttpServletRequest req) throws IOException, ServletException {
         try {
             Part filePart = req.getPart("file");
+
             final String fileName = filePart.getSubmittedFileName();
+            if(fileName==null)
+            {
+                return new Result("","");
+            }
             //Security check we must upload only images.
             if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
                 final String extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
@@ -181,7 +186,7 @@ public class EventServlet extends HttpServlet {
             String dtString = dt.format(formatter);
             final String fileName = dtString + filePart.getSubmittedFileName();
             //Creates aws credential via accesskey and secretKey that needs upload to AWS server.
-            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJHNEA7COG6ITDUXQ", "6+j46nXn4EP82j7moovxTNV/9VR00hTgT/TgBgSj");
+            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAIOUG37KVA3MV45CA", "V/sgKQ+lrgetpoWa8t3YCNWU24xnCXr8m+bHOPyM");
             //S3 client with us-east-2 region that connect to AWS server as a client.
             AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
                     .withRegion("us-east-2")

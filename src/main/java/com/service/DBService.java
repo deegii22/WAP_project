@@ -50,6 +50,11 @@ public class DBService {
                         return new Result("Error occured on add Event Route.", null);
                     }
                 }
+                sql = "insert into event_member(event_id, user_id) values((select max(event_id) from event),"+event.getOwnerId()+");";
+                int rsSub = stmt.executeUpdate(sql);
+                if (rsSub != 1) {
+                    return new Result("Error occured on add Event Member.", null);
+                }
                 return new Result("", null);
             } else
                 return new Result("Error occured on add Event.", null);

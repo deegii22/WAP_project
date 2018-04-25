@@ -126,6 +126,7 @@ $(function () {
             $('#eventName').val("");
             $('#start').val("");
             $('#end').val("");
+                $("#dynamicTable").empty();
         });
     });
 
