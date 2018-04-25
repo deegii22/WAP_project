@@ -198,7 +198,7 @@ function getEvent(e) {
             $('<p>').text("Start date: " + data.startDate).appendTo('.modal-body');
             $('<p>').text("End date: " + data.endDate).appendTo('.modal-body');
             $('.modal-footer').empty();
-            if(data.status === 0){
+            if(data.myEvent === 1 && data.status === 0){
                 $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnStartEvent"}).text("Start an event").appendTo('.modal-footer');
             }
             $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');

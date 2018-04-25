@@ -6,6 +6,7 @@ import com.model.EventMember;
 import com.model.EventRoute;
 import com.model.*;
 import org.json.simple.JSONObject;
+
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +17,7 @@ public class DBService {
     static Connection conn = null;
     static Statement stmt = null;
     String sql;
+
     //This is connection function to DB.
     public static Connection connectDB() {
         try {
@@ -131,7 +133,7 @@ public class DBService {
     }
 
     /*Added by deegii, show event description*/
-    public JSONObject getEvent(int id) {
+    public JSONObject getEvent(int id, int userId) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -150,9 +152,10 @@ public class DBService {
                 obj.put("endDate", resultSet.getTimestamp("end_date").toLocalDateTime().format(formatter));
                 obj.put("ownerId", resultSet.getInt("owner_id"));
                 obj.put("img", resultSet.getString("route_img"));
-                obj.put("emergencyFlag", resultSet.getString("emergency_info"));
-                obj.put("emergencyInfo", "");
+                obj.put("emergencyFlag", resultSet.getString("emergency_Flag"));
+                obj.put("emergencyInfo", resultSet.getString("emergency_info"));
                 obj.put("created", resultSet.getTimestamp("created").toLocalDateTime().format(formatter));
+                obj.put("myEvent", userId == resultSet.getInt("owner_id") ? 1 : 0);
             }
 
             return obj;

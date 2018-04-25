@@ -76,9 +76,10 @@ public class EventServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         PrintWriter out = response.getWriter();
-
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        ServletContext sc = getServletContext();
+        Integer userId = Integer.parseInt(String.valueOf(sc.getAttribute("userid")));
         int id = 0;
         switch (action) {
             case "upcomingList":
@@ -89,7 +90,7 @@ public class EventServlet extends HttpServlet {
                 break;
             case "get":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.getEvent(id));
+                out.print(db.getEvent(id, userId));
                 break;
             case "getAllRoutes":
                 id = Integer.parseInt(request.getParameter("id"));
