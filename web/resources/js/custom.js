@@ -12,7 +12,7 @@ $(function (){
     });
 
     $('#alertEvent').click(function () {
-        $('.alert').toggle();
+        $('.alert1').toggle();
     });
 
     $('#exampleModalCenter').on('shown.bs.modal', getEvent);
@@ -34,6 +34,7 @@ $(function (){
             url: '/Event?action=startEvent&id=' + id,
             type:"POST",
             success: function () {
+                $('#exampleModalCenter').modal('hide');
                 upcomingAjaxList();
                 ongoingAjaxList();
             },
@@ -41,13 +42,32 @@ $(function (){
         });
     })
 
-    $(document).on('click','#redFlag', function () {
-        var eventId = $('#redFlag').attr('data-eventId');
-        var priority = $('#redFlag').attr('data-priority');
+    $(document).on('click','.redFlag', function (e) {
+        var eventId = e.target.attributes.getNamedItem('data-eventId').value;
+        var priority = e.target.attributes.getNamedItem('data-priority').value;
+
         $.ajax({
             url: '/Event?action=setEFlag&id=' + eventId + '&priority=' + priority + '&info=' + "",
             type:"POST",
-            success: redflagAjaxList,
+            success: function (){
+                $('#exampleModalCenter').modal('hide');
+                redflagAjaxList();
+            },
+            error: failureFunction
+        });
+    })
+
+    $(document).on('click','.resolveFlag', function (e) {
+        var eventId = e.target.attributes.getNamedItem('data-eventId').value;
+        var priority = e.target.attributes.getNamedItem('data-priority').value;
+
+        $.ajax({
+            url: '/Event?action=setEFlag&id=' + eventId + '&priority=0' + '&info=' + "",
+            type:"POST",
+            success: function (){
+                $('#exampleModalCenter').modal('hide');
+                redflagAjaxList();
+            },
             error: failureFunction
         });
     })
@@ -157,12 +177,12 @@ function upcomingList(data) {
         }
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
-        $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
+        /*$('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);*/
         $('<p>').attr({ 'class': "card-text" }).text("Start date: " + data[item].startDate).appendTo('#card-body' + data[item].eventId);
         $('<p>').attr({ 'class': "card-text" }).text("End date: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
         $('<p>').attr({ 'class': "card-text","id":"card-text" + data[item].eventId}).appendTo('#card-body' + data[item].eventId);
         $('<small>').attr({ 'class': "text-muted" }).text("Last updated 3 mins ago").appendTo('#card-text' + data[item].eventId);
-        $('<a>').attr({ 'class': "card-link", 'href':'#','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
+        $('<a>').attr({ 'class': "card-link", 'href':'#upcoming','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
     }
 }
 
@@ -175,10 +195,10 @@ function ongoingList(data) {
         }
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
-        $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
-        $('<div>').attr({ 'class': "card-text" }).text(data[item].startDate).appendTo('#card-body' + data[item].eventId);
-        $('<div>').attr({ 'class': "card-text" }).text(data[item].endDate).appendTo('#card-body' + data[item].eventId);
-        $('<a>').attr({ 'class': "card-link", 'href':'#','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
+        /*$('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);*/
+        $('<div>').attr({ 'class': "card-text" }).text("Start date: " +data[item].startDate).appendTo('#card-body' + data[item].eventId);
+        $('<div>').attr({ 'class': "card-text" }).text("End date: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
+        $('<a>').attr({ 'class': "card-link", 'href':'#ongoing','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
     }
 }
 
@@ -205,13 +225,15 @@ function failureFunction() {
 /*Added by deegii, show event description in the modal*/
 function getEvent(e) {
     var id = e.relatedTarget.attributes.getNamedItem('data-eventId').value;
+    var type = e.relatedTarget.getAttribute('href');
+    var emergencyFlag;
     $.ajax({
         url: '/Event?action=get&id=' + id,
         type:"GET",
         success: function(data){
             $('#exampleModalLongTitle').append(data.name);
             if(data.img != ""){
-                $('.modal-body').append($('<img>').attr({"src": data.img, "style":"width:100%"}));
+                $('.modal-body').append($('<img>').attr({"src": data.img, "class":"modal-img"}));
             }
             $('<p>').text("Start date: " + data.startDate).appendTo('.modal-body');
             $('<p>').text("End date: " + data.endDate).appendTo('.modal-body');
@@ -219,45 +241,75 @@ function getEvent(e) {
             if(data.myEvent === 1 && data.status === 0){
                 $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnStartEvent"}).text("Start an event").appendTo('.modal-footer');
             }
-            $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');
+            $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-warning", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');
             var aa = sessionStorage.getItem("user");
-
+            emergencyFlag= data.emergencyFlag;
         },
-    });
-    $.ajax({
-        url: '/Event?action=getAllRoutes&id=' + id,
-        type:"GET",
-        success: function(data){
-            $('<div>').attr({ 'class': "routes", 'id':"routes"  + id}).text("Routes").appendTo('.modal-body');
-            $('<table>').attr({"class":"table table-bordered","id":"table" + id}).appendTo('#routes' + id);
-            for (let item in data) {
-                $('<tr>').attr({"id": "tr" + data[item].priority}).appendTo('#table' + id);
-                $('<td>').text(data[item].startPosition).appendTo('#tr' + data[item].priority);
-                $('<td>').text(data[item].endPosition).appendTo('#tr' + data[item].priority);
-                $('<td>').text(data[item].duration).appendTo('#tr' + data[item].priority);
-                $('<td>').attr({"id":"td" + data[item].priority}).appendTo('#tr' + data[item].priority);
-                $('<a>').attr({ 'class': "alert alert-warning",'id': 'redFlag','data-eventid': id, 'data-priority': data[item].priority}).text(data[item].status === 0 ? "Red flag":"finished").appendTo('#td' + data[item].priority);
-            }
-        }
     });
 
     $.ajax({
         url: '/Event?action=getMembers&id=' + id,
         type:"GET",
         success: function(data){
-            $('<div>').attr({ 'class': "members", 'id':"members" + id}).text("Members").appendTo('.modal-body');
-            $('<ul>').attr({"id":"ul" + id}).appendTo('#members' + id);
+            if(data != null){
+                $('<p>').attr({ 'id':"members" + id}).text("Members: ").appendTo('.modal-body');
+                $('<ul>').attr({"id":"ul" + id}).appendTo('#members' + id);
+                for (let item in data) {
+                    $('<li>').text(data[item].userName).appendTo('#ul' + id);
+                }
+            } else {
+                $('<p>').attr({ 'id':"members" + id}).text("Members: No members").appendTo('.modal-body');
+            }
+        }
+    });
+
+    $.ajax({
+        url: '/Event?action=getAllRoutes&id=' + id,
+        type:"GET",
+        success: function(data){
+            $('<p>').text("Routes: ").appendTo('.modal-body');
+            $('<table>').attr({"class":"table","id":"table" + id}).appendTo('.modal-body');
+            $('<thead>').attr({"class":"theadMembers"}).appendTo('#table' + id);
+            $('<th>').text("Start position").appendTo('.theadMembers');
+            $('<th>').text("End position").appendTo('.theadMembers');
+            $('<th>').text("Duration").appendTo('.theadMembers');
+            $('<th colspan="2">').text("Status").appendTo('.theadMembers');
             for (let item in data) {
-                $('<li>').text(data[item].userName).appendTo('#ul' + id);
+                $('<tr>').attr({"id": "tr" + data[item].priority}).appendTo('#table' + id);
+                $('<td>').text(data[item].startPosition).appendTo('#tr' + data[item].priority);
+                $('<td>').text(data[item].endPosition).appendTo('#tr' + data[item].priority);
+                $('<td>').text(data[item].duration).appendTo('#tr' + data[item].priority);
+                if(type != "#upcoming"){
+                    $('<td>').attr({"id":"td" + data[item].priority}).appendTo('#tr' + data[item].priority);
+                    if(data[item].status === 0){
+                        $('<span>').attr({'data-eventid': id, 'data-priority': data[item].priority}).text("finished").appendTo('#td' + data[item].priority);
+                    } else {
+                        $('<button>').attr({ 'class': "btn btn-secondary",'data-eventid': id, 'data-priority': data[item].priority}).text("finish").appendTo('#td' + data[item].priority);
+                    }
+                    $('<td>').attr({"id":"emergency" + data[item].priority}).appendTo('#tr' + data[item].priority);
+                    if(emergencyFlag == "0"){
+                        $('<button>').attr({ 'class': "btn btn-danger redFlag",'data-eventid': id, 'data-priority': data[item].priority}).text("Red flag").appendTo('#emergency' + data[item].priority);
+                    } else {
+                        $('<button>').attr({ 'class': "btn btn-warning resolveFlag",'data-eventid': id, 'data-priority': data[item].priority}).text("Resolve").appendTo('#emergency' + data[item].priority);
+                    }
+
+                }
             }
         }
     });
 }
 
 function getEFlags(data) {
-    console.log(data);
     if(data != null){
-        $('#alertEvent').attr({"class":"btn btn-danger"});
+        $('#alertEvent').attr({"class":"btn btn-danger btn-lg"});
+        for(let item in data){
+            $('<div>').attr({"id": "list" + data[item].eventId}).appendTo(".alert1");
+            $('<p>').text("Event name: " + data[item].eventId).appendTo('#list' + data[item].eventId);
+            $('<p>').text("Ride participants: " + data[item].members).appendTo('#list' + data[item].eventId);
+            $('<p>').text("Current location: " + data[item].position).appendTo('#list' + data[item].eventId);
+        }
+    } else {
+        $('#alertEvent').attr({"class":"btn btn-secondary btn-lg"});
     }
 
 }

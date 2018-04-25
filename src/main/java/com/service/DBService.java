@@ -435,9 +435,6 @@ public class DBService {
                 return results;
             }
 
-            /*JSONObject res = new JSONObject();
-            res.put("error", "No results found");
-            objectToReturn[0] = res;*/
             return null;
 
         } catch (Exception e) {
@@ -494,10 +491,7 @@ public class DBService {
                 return results;
             }
 
-            JSONObject res = new JSONObject();
-            res.put("error", "No results found");
-            objectToReturn[0] = res;
-            return objectToReturn;
+            return null;
 
         } catch (Exception e) {
             e.printStackTrace();
