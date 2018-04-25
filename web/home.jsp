@@ -1,4 +1,4 @@
-<%--
+<%@ page import="com.model.User" %><%--
   Created by IntelliJ IDEA.
   User: deegii
   Date: 4/21/2018
@@ -11,20 +11,23 @@
   if(session.getAttribute("user") == null){
       response.sendRedirect("login.jsp");
   }
+
+    User user = (User) session.getAttribute("user");
+    String name = user.getName();
 %>
 <body>
 <div class="container">
   <div class="header">
       <div class="jumbotron">
+          <a class="btn btn-link logout" href='<% if(session.getAttribute("user") != null){ session.setMaxInactiveInterval(1); out.print("login.jsp");} %>' role="button" id="logout">Sign out</a>
           <img src="resources/images/logo.png" width="130px" class="float-left logo">
-          <h1 class="display-4">Welcome to Cycling Club!</h1>
+          <h1 class="display-4">Welcome <span class="user_name"><%=name%></span>, to Cycling Club! </h1>
           <p class="lead">Go ride a bike!</p>
           <hr class="my-4">
           <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
           <p class="lead">
-              <a class="btn btn-primary btn-lg" href="#" role="button" id="addEvent">Add Event</a>
+              <a class="btn btn-success btn-lg" href="#" role="button" id="addEvent">Add Event</a>
               <a class="btn btn-danger btn-lg" href="#" role="button" id="alertEvent">Red Box</a>
-              <a class="btn btn-primary btn-lg" href='<% if(session.getAttribute("user") != null){ session.setMaxInactiveInterval(1); out.print("login.jsp");} %>' role="button" id="logout">Sign out</a>
           </p>
           <div class="add-event">
               <form class="row">
@@ -81,7 +84,7 @@
                   <input type="submit" id="btnAddEvent" value="Save event" class="btn btn-primary"/>
               </form>
           </div>
-          <div class="alert alert-danger" role="alert">
+          <div class="alert alert-danger alert1" role="alert">
               Event name:<br/>
               Ride participants:<br/>
               Current location:

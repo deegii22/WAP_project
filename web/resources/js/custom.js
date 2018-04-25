@@ -157,8 +157,8 @@ function upcomingList(data) {
         $('<div>').attr({ 'class': "card-body", "id":"card-body" + data[item].eventId}).appendTo('#card' + data[item].eventId);
         $('<h5>').attr({ 'class': "card-title", "id": "card-title" + data[item].eventId}).text(data[item].name).appendTo('#card-body' + data[item].eventId);
         $('<span>').attr({ 'class': "badge badge-secondary" }).text("New").appendTo('#card-title' + data[item].eventId);
-        $('<p>').attr({ 'class': "card-text" }).text("Start date: " + "2018-4-22").appendTo('#card-body' + data[item].eventId);
-        $('<p>').attr({ 'class': "card-text" }).text("End date: " + "2018-4-23").appendTo('#card-body' + data[item].eventId);
+        $('<p>').attr({ 'class': "card-text" }).text("Start date: " + data[item].startDate).appendTo('#card-body' + data[item].eventId);
+        $('<p>').attr({ 'class': "card-text" }).text("End date: " + data[item].endDate).appendTo('#card-body' + data[item].eventId);
         $('<p>').attr({ 'class': "card-text","id":"card-text" + data[item].eventId}).appendTo('#card-body' + data[item].eventId);
         $('<small>').attr({ 'class': "text-muted" }).text("Last updated 3 mins ago").appendTo('#card-text' + data[item].eventId);
         $('<a>').attr({ 'class': "card-link", 'href':'#','data-toggle':'modal','data-target':'#exampleModalCenter', 'data-eventId':data[item].eventId}).text("more ...").appendTo('#card-body' + data[item].eventId);
@@ -210,7 +210,12 @@ function getEvent(e) {
         type:"GET",
         success: function(data){
             $('#exampleModalLongTitle').append(data.name);
-            $('.modal-body').append(data.startDate + '<br/>' + data.endDate);
+            data.img = 'resources/images/logo.png';
+            if(data.img != ""){
+                $('.modal-body').append($('<img>').attr({"src": data.img, "style":"width:100%"}));
+            }
+            $('<p>').text("Start date: " + data.startDate).appendTo('.modal-body');
+            $('<p>').text("End date: " + data.endDate).appendTo('.modal-body');
             $('.modal-footer').empty();
             if(data.status === 0){
                 $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnStartEvent"}).text("Start an event").appendTo('.modal-footer');

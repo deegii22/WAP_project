@@ -14,12 +14,14 @@
                 <img src="resources/images/logo.png" width="180px" alt="logo"/>
             </div>
 
-            <div class="alert alert-danger" role="alert" id="errorMessage">
-                <%
-                    String errorMessage = (String)request.getAttribute("loginError");
-                    if(errorMessage != null){out.print(errorMessage);}
-                %>
-            </div>
+            <%
+                String errorMessage = (String)request.getAttribute("loginError");
+                if(errorMessage != null){
+            %>
+                <div class="alert alert-danger" role="alert" style="margin-top: 10px">
+                    <%out.print(errorMessage);%>
+                </div>
+            <% }  %>
             <%--<h2>Cycling Club Application</h2>--%>
             <form action="Login" method="post">
                 <div class="form-group">

@@ -4,14 +4,27 @@ body {
 .header {
     padding: 20px 0;
 }
+.logout {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 15px;
+    text-transform: uppercase;
+}
+.jumbotron {
+    position: relative;
+}
 .logo {
     margin-right: 30px;
+}
+.user_name {
+    text-transform: uppercase;
 }
 .add-event {
     border: 1px solid #ddd;
     border-radius: 10px;
 }
-.add-event, .alert {
+.add-event, .alert1 {
     display: none;
     padding: 20px;
 }
