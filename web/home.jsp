@@ -8,12 +8,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="header.jsp"%>
 <%
-  if(session.getAttribute("user") == null){
+  User user = (User) request.getSession().getAttribute("user");
+  if(user == null){
       response.sendRedirect("login.jsp");
-  }
-
-    User user = (User) session.getAttribute("user");
-    String name = user.getName();
+  } else {
+      String name = user.getName();
 %>
 <body>
 <div class="container">
@@ -139,3 +138,6 @@
 </div>
 </body>
 </html>
+<%
+    }
+%>

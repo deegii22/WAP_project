@@ -145,7 +145,7 @@ public class DBService {
         JSONObject obj = new JSONObject();
 
         try {
-            preparedStatement = conn.prepareStatement("select e.*, case when m.event_id = null then 0 else 1 end is_Join from Event e " +
+            preparedStatement = conn.prepareStatement("select e.*, case when m.event_id is null then 0 else 1 end is_Join from Event e " +
                     "left join (select event_id  from Event_member where event_id=? and user_id=?) m " +
                     "on e.event_id = m.event_id " +
                     "where e.event_id = ?");
