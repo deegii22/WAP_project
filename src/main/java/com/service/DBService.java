@@ -319,23 +319,15 @@ public class DBService {
     public void startEvent(int eventId) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             preparedStatement = conn.prepareStatement("update event set status=1, start_date=sysdate(), " +
                     "end_date=date_add(sysdate(), interval (select sum(duration) from event_route where event_id=? group by event_id) minute) " +
                     "where event_id=?");
             preparedStatement.setInt(1, eventId);
-            resultSet = preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
@@ -350,22 +342,14 @@ public class DBService {
     public void joinEvent(int eventId, long userId) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             preparedStatement = conn.prepareStatement("insert into event_member(event_id, user_id) values(?,?)");
             preparedStatement.setInt(1, eventId);
             preparedStatement.setLong(2, userId);
-            resultSet = preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
@@ -380,22 +364,14 @@ public class DBService {
     public void finishRoute(int eventId, int priority) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             preparedStatement = conn.prepareStatement("update event_route set status=1 where event_id=? and priority=?");
             preparedStatement.setInt(1, eventId);
             preparedStatement.setInt(2, priority);
-            resultSet = preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
@@ -542,23 +518,15 @@ public class DBService {
     public void updateEFlag(int eventId, int routePriority, String info) {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
         try {
             preparedStatement = conn.prepareStatement("update event set emergency_flag=?, emergency_info=? where event_id=?");
             preparedStatement.setInt(1, routePriority);
             preparedStatement.setString(2, info);
             preparedStatement.setInt(3, eventId);
-            resultSet = preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
             if (preparedStatement != null) {
                 try {
                     preparedStatement.close();
@@ -602,7 +570,7 @@ public class DBService {
         }
         return new Result("Invalid Username or password", null);
     }
-    
+
     public Result addUser(User user) {
         String existCheckSQL = "select name from User where email= ?";
 
