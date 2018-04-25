@@ -44,7 +44,7 @@ public class DBService {
             if (rs == 1) {
                 for (EventRoute e : event.getRoutes()) {
                     sql = "insert into Event_route (event_id, start_position, end_position, status, priority, duration)\n" +
-                            "    values (LAST_INSERT_ID(), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
+                            "    values ((select max(event_id) from event), '" + e.getStartPosition() + "', '" + e.getEndPosition() + "', 0, " + e.getPriority() + ", " + e.getDuration() + ");";
                     int rsSub = stmt.executeUpdate(sql);
                     if (rsSub != 1) {
                         return new Result("Error occured on add Event Route.", null);
