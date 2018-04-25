@@ -2,28 +2,11 @@
 
 $(function (){
 
-    $.ajax({
-        url: "/Event?action=upcomingList",
-        type: "GET",
-        success: upcomingList,
-        error: failureFunction
-    });
+    upcomingAjaxList();
 
-    $.ajax({
-        url: "/Event?action=ongoingList",
-        type: "GET",
-        success: ongoingList,
-        error: failureFunction
-    });
+    ongoingAjaxList();
 
-    // Added by Delgersaikhan  - Start
-    $.ajax({
-        url: "/Members",
-        type: "GET",
-        success: memberList,
-        error: failureFunction
-    });
-    // Added by Delgersaikhan  - End
+    memberAjaxList();
 
     var arrRoute = [];
 
@@ -196,7 +179,6 @@ function memberList(data) {
 
     }
 }
-/*Added by Delgersaikhan, Member list - End*/
 
 function failureFunction() {
     console.log("Couldn't load ajax");
@@ -235,7 +217,7 @@ function getEvent(e) {
                 $('<td>').text(data[item].startPosition).appendTo('#tr' + data[item].priority);
                 $('<td>').text(data[item].endPosition).appendTo('#tr' + data[item].priority);
                 $('<td>').text(data[item].duration).appendTo('#tr' + data[item].priority);
-                $('<td>').attr({"id":"td" + id}).appendTo('#tr' + data[item].priority);
+                $('<td>').attr({"id":"td" + data[item].priority}).appendTo('#tr' + data[item].priority);
                 $('<span>').attr({ 'class': "alert alert-warning"}).text(data[item].status === 0 ? "upcoming":"finished").appendTo('#td' + data[item].priority);
             }
         }
@@ -245,9 +227,10 @@ function getEvent(e) {
         url: '/Event?action=getMembers&id=' + id,
         type:"GET",
         success: function(data){
-            $('<div>').attr({ 'class': "btn", 'id':"members"}).text("Members").appendTo('.modal-body');
+            $('<div>').attr({ 'class': "members", 'id':"members" + id}).text("Members").appendTo('.modal-body');
+            $('<ul>').attr({"id":"ul" + id}).appendTo('#members' + id);
             for (let item in data) {
-                $('<p>').attr({ 'class': "btn"}).text(data[item].userName).appendTo('#members');
+                $('<li>').text(data[item].userName).appendTo('#ul' + id);
             }
         }
     });
@@ -256,4 +239,34 @@ function getEvent(e) {
 function hideEvent() {
     $('#exampleModalLongTitle').empty()
     $('.modal-body').empty()
+}
+
+/*Added by Deegii*/
+function upcomingAjaxList() {
+    $.ajax({
+        url: "/Event?action=upcomingList",
+        type: "GET",
+        success: upcomingList,
+        error: failureFunction
+    });
+}
+
+/*Added by Deegii*/
+function ongoingAjaxList() {
+    $.ajax({
+        url: "/Event?action=ongoingList",
+        type: "GET",
+        success: ongoingList,
+        error: failureFunction
+    });
+}
+
+// Added by Delgersaikhan  - Start
+function memberAjaxList(){
+    $.ajax({
+        url: "/Members",
+        type: "GET",
+        success: memberList,
+        error: failureFunction
+    });
 }
