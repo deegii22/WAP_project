@@ -50,7 +50,7 @@ public class DBService {
                         return new Result("Error occured on add Event Route.", null);
                     }
                 }
-                sql = "insert into event_member(event_id, user_id) values((select max(event_id) from event),"+event.getOwnerId()+");";
+                sql = "insert into Event_member(event_id, user_id) values((select max(event_id) from event),"+event.getOwnerId()+");";
                 int rsSub = stmt.executeUpdate(sql);
                 if (rsSub != 1) {
                     return new Result("Error occured on add Event Member.", null);
@@ -334,7 +334,7 @@ public class DBService {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = conn.prepareStatement("update event set status=1, start_date=sysdate(), " +
+            preparedStatement = conn.prepareStatement("update Event set status=1, start_date=sysdate(), " +
                     "end_date=date_add(sysdate(), interval (select sum(duration) from event_route where event_id=? group by event_id) minute) " +
                     "where event_id=?");
             preparedStatement.setInt(1, eventId);
@@ -358,7 +358,7 @@ public class DBService {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = conn.prepareStatement("insert into event_member(event_id, user_id) values(?,?)");
+            preparedStatement = conn.prepareStatement("insert into Event_member(event_id, user_id) values(?,?)");
             preparedStatement.setInt(1, eventId);
             preparedStatement.setLong(2, userId);
             preparedStatement.executeUpdate();
@@ -380,7 +380,7 @@ public class DBService {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = conn.prepareStatement("update event_route set status=1 where event_id=? and priority=?");
+            preparedStatement = conn.prepareStatement("update Event_route set status=1 where event_id=? and priority=?");
             preparedStatement.setInt(1, eventId);
             preparedStatement.setInt(2, priority);
             preparedStatement.executeUpdate();
@@ -408,12 +408,12 @@ public class DBService {
                     "  r.event_id, " +
                     "  CONCAT(start_position, ' -> ', end_position) position, " +
                     "  u.members, e.emergency_info, e.name  " +
-                    "from event_route r left join event e on r.event_id = e.event_id and r.priority = e.emergency_flag " +
+                    "from Event_route r left join Event e on r.event_id = e.event_id and r.priority = e.emergency_flag " +
                     "  left join (select " +
                     "               m.event_id, " +
                     "               GROUP_CONCAT(u.name SEPARATOR ', ') members " +
                     "             from " +
-                    "               event_member m, " +
+                    "               Event_member m, " +
                     "               user u " +
                     "             where " +
                     "               m.user_id = u.user_id " +
@@ -476,7 +476,7 @@ public class DBService {
         ResultSet resultSet = null;
         JSONObject[] objectToReturn = new JSONObject[1];
         try {
-            preparedStatement = conn.prepareStatement("select e.event_id, e.user_id, u.name from Event_member e left join user u on e.user_id=u.user_id where e.event_id = ?");
+            preparedStatement = conn.prepareStatement("select e.event_id, e.user_id, u.name from Event_member e left join User u on e.user_id=u.user_id where e.event_id = ?");
             preparedStatement.setInt(1, eventId);
             resultSet = preparedStatement.executeQuery();
             List<EventMember> members = new ArrayList();
@@ -530,7 +530,7 @@ public class DBService {
         conn = connectDB();
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = conn.prepareStatement("update event set emergency_flag=?, emergency_info=? where event_id=?");
+            preparedStatement = conn.prepareStatement("update Event set emergency_flag=?, emergency_info=? where event_id=?");
             preparedStatement.setInt(1, routePriority);
             preparedStatement.setString(2, info);
             preparedStatement.setInt(3, eventId);
@@ -586,7 +586,7 @@ public class DBService {
     public Result addUser(User user) {
         String existCheckSQL = "select name from User where email= ?";
 
-        sql = "insert into user (name, email, password, phone, sex, birth_date, created)" +
+        sql = "insert into User (name, email, password, phone, sex, birth_date, created)" +
                 " values (?,?,?,?,?,?, now())";
 
         try {
