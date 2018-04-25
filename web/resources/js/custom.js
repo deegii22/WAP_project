@@ -16,6 +16,15 @@ $(function (){
         error: failureFunction
     });
 
+    // Added by Delgersaikhan  - Start
+    $.ajax({
+        url: "/Members",
+        type: "GET",
+        success: memberList,
+        error: failureFunction
+    });
+    // Added by Delgersaikhan  - End
+
     var arrRoute = [];
 
     $('#addEvent').click(function () {
@@ -35,12 +44,20 @@ $(function (){
         $.ajax({
             url: '/Event?action=joinEvent&id=' + id,
             type:"POST",
-            enctype: 'multipart/form-data',
-            success: function(data){
-            },
+            //success: upcomingList,
+            error: failureFunction
         });
     })
 
+    $(document).on('click', '#btnStartEvent', function () {
+        var id = $('#btnStartRide').attr('data-eventId')
+        $.ajax({
+            url: '/Event?action=startEvent&id=' + id,
+            type:"POST",
+            //success: upcomingList,
+            error: failureFunction
+        });
+    })
 
 /*Added by deegii, tab change event*/
     /*    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
@@ -122,7 +139,6 @@ $(function (){
     });
 });
 
-
 function showSignUpPage(){
     window.location.assign("signup.jsp")
 }
@@ -165,6 +181,23 @@ function ongoingList(data) {
     }
 }
 
+/*Added by Delgersaikhan, Member list - Start*/
+function memberList(data) {
+    let array = JSON.parse(data);
+
+    for(let i=0; i<array.length; i++){
+        $('<div>').attr({ 'class': "card","id": "card" + i }).appendTo('#columns2');
+        $('<div>').attr({ 'class': "card-body", "id":"card-body" + i}).appendTo('#card' + i);
+        $('<h5>').attr({ 'class': "card-title", "id": "card-title" + i}).text(array[i].name).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Gender: " + array[i].sex).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Email: " + array[i].email).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Phone: " + array[i].phone).appendTo('#card-body' + i);
+        $('<div>').attr({ 'class': "card-text" }).text("Birthday: " + array[i].birthday).appendTo('#card-body' + i);
+
+    }
+}
+/*Added by Delgersaikhan, Member list - End*/
+
 function failureFunction() {
     console.log("Couldn't load ajax");
 }
@@ -178,8 +211,38 @@ function getEvent(e) {
         success: function(data){
             $('#exampleModalLongTitle').append(data.name);
             $('.modal-body').append(data.startDate + '<br/>' + data.endDate);
+            $('.modal-footer').empty();
+            if(data.status === 0){
+                $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnStartEvent"}).text("Start an event").appendTo('.modal-footer');
+            }
             $('<button>').attr({'data-eventId':data.eventId, 'class':"btn btn-primary", 'id':"btnJoinRide"}).text("Join a ride").appendTo('.modal-footer');
+            var aa = sessionStorage.getItem("user");
+
         },
+    });
+    $.ajax({
+        url: '/Event?action=getAllRoutes&id=' + id,
+        type:"GET",
+        success: function(data){
+            $('<div>').attr({ 'class': "btn", 'id':"routes"}).text("Routes").appendTo('.modal-body');
+            for (let item in data) {
+                $('<p>').attr({ 'class': "btn"}).text(data[item].startPostion).appendTo('#routes');
+                $('<p>').attr({ 'class': "btn"}).text(data[item].endPostion).appendTo('#routes');
+                $('<p>').attr({ 'class': "btn"}).text(data[item].duration).appendTo('#routes');
+                $('<p>').attr({ 'class': "btn"}).text(data[item].status === 0 ? "upcoming":"finished").appendTo('#routes');
+            }
+        }
+    });
+
+    $.ajax({
+        url: '/Event?action=getMembers&id=' + id,
+        type:"GET",
+        success: function(data){
+            $('<div>').attr({ 'class': "btn", 'id':"members"}).text("Members").appendTo('.modal-body');
+            for (let item in data) {
+                $('<p>').attr({ 'class': "btn"}).text(data[item].userName).appendTo('#members');
+            }
+        }
     });
 }
 

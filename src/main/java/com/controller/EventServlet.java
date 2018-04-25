@@ -1,27 +1,29 @@
 package com.controller;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.model.Event;
 import com.model.EventRoute;
+import com.model.User;
 import com.service.DBService;
 import com.service.Result;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import javax.servlet.ServletContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
+import javax.servlet.http.*;
 import java.io.*;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 
 @WebServlet("/Event")
 @MultipartConfig
@@ -30,6 +32,9 @@ public class EventServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         PrintWriter out = response.getWriter();
+        ServletContext sc = getServletContext();
+        Integer userId = Integer.parseInt(String.valueOf(sc.getAttribute("userid")));
+
         try {
             String action = request.getParameter("action");
             int id = 0;
@@ -80,15 +85,15 @@ public class EventServlet extends HttpServlet {
                 break;
             case "getAllRoutes":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.eventRoutes(id, false));
+                out.print(Arrays.toString(db.eventRoutes(id, false)));
                 break;
             case "getActiveRoutes":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.eventRoutes(id, true));
+                out.print(Arrays.toString(db.eventRoutes(id, true)));
                 break;
             case "getMembers":
                 id = Integer.parseInt(request.getParameter("id"));
-                out.print(db.eventMembers(id));
+                out.print(Arrays.toString(db.eventMembers(id)));
                 break;
             default:
                 break;
@@ -98,24 +103,16 @@ public class EventServlet extends HttpServlet {
 
     private Result addEvent(HttpServletRequest request) {
         try {
-            String eventName = request.getParameter("eventName");
             int ownerID = 1;    //session-s awna.
-            String name = request.getParameter("eventName");
+            String name = request.getParameter("name");
             String route = request.getParameter("route");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), formatter);
-            LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), formatter);
-            Part filePart = request.getPart("file"); // Retrieves <input type="file" name="file">
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
-            InputStream fileContent = filePart.getInputStream();
-            byte[] buffer = new byte[fileContent.available()];
-            fileContent.read(buffer);
-            File targetFile = new File("D:\\UploadFiles\\123" + fileName);
-            OutputStream outStream = new FileOutputStream(targetFile);
-            outStream.write(buffer);
+            //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-ddTHH:mm");
+            LocalDateTime start = LocalDateTime.parse(request.getParameter("start"), DateTimeFormatter.ISO_DATE_TIME);
+            LocalDateTime end = LocalDateTime.parse(request.getParameter("end"), DateTimeFormatter.ISO_DATE_TIME);
+            String urlImg = getImageUrl(request);
             Event event = new Event();
             event.setName(name);
-            event.setRoute("D:\\UploadFiles\\123" + fileName);
+            event.setRoute(urlImg);
             event.setStartDate(start);
             event.setEndDate(end);
             JSONParser parser = new JSONParser();
@@ -132,6 +129,81 @@ public class EventServlet extends HttpServlet {
             return db.AddEvent(event);
         } catch (Exception ex) {
             return new Result(ex.getMessage(), null);
+        }
+    }
+
+    public String getImageUrl(HttpServletRequest req) throws IOException, ServletException {
+        try {
+            Part filePart = req.getPart("file");
+            final String fileName = filePart.getSubmittedFileName();
+            if (fileName != null && !fileName.isEmpty() && fileName.contains(".")) {
+                final String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+                String[] allowedExt = {"jpg", "jpeg", "png", "gif"};
+                for (String s : allowedExt) {
+                    if (extension.equals(s)) {
+                        return this.uploadFile(filePart);
+                    }
+                }
+                return "File must be an image.";
+            }
+            else
+                return "Invalid file name.";
+        }
+        catch (Exception ex){
+            return ex.getMessage();
+        }
+    }
+    //This function upload to AWS server
+    public String uploadFile(Part filePart) throws IOException {
+        try {
+            //Creates file name. It's possible that files with same names are uploaded.
+            //We  should create unique names. /Unique enough/
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd-HHmmssSSS");
+            LocalDateTime dt = LocalDateTime.now();
+            String dtString = dt.format(formatter);
+            final String fileName = dtString + filePart.getSubmittedFileName();
+            //Creates aws credential via accesskey and secretKey that needs upload to AWS server.
+            BasicAWSCredentials awsCreds = new BasicAWSCredentials("AKIAJTPJNGONK2H3N74Q", "skofv8UdMWcxm7PvyDsJztrtCXxUpjqGrKs2wFuR");
+            //S3 client that 
+            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                    .withRegion("us-east-2")
+                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                    .build();
+            InputStream inputStream = filePart.getInputStream();
+            OutputStream out = null;
+            try {
+                out = new FileOutputStream(new File(getServletContext().getRealPath("/")
+                        + fileName));
+                int read = 0;
+                final byte[] bytes = new byte[1024];
+
+                while ((read = inputStream.read(bytes)) != -1) {
+                    out.write(bytes, 0, read);
+                }
+            } catch (FileNotFoundException fne) {
+
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            }
+            try {
+                System.out.println("Uploading a new object to S3 from a file\n");
+                File file = new File(getServletContext().getRealPath("/")
+                        + fileName);
+                s3Client.putObject(new PutObjectRequest(
+                        "wapbucket", fileName, file));
+                return s3Client.getUrl("wapbucket", fileName).toString();
+
+            } catch (AmazonServiceException ase) {
+                return ase.getMessage();
+            }
+        }
+        catch (Exception ex){
+            return ex.getMessage();
         }
     }
 }
