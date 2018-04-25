@@ -11,17 +11,14 @@
     <div class="container">
         <div class="col-md-6 offset-md-3" style="margin-top: 30px">
             <h1>Sign Up</h1>
-            <p>
-                <%
-                    String errorMessage = (String)request.getAttribute("signupError");
-                    if(errorMessage != null){
-                        out.print(errorMessage);
-                    }else{
-                        String success = (String)request.getAttribute("signupSuccess");
-                        if(success != null) out.print(success);
-                    }
-                %>
-            </p>
+            <%
+                String errorMessage = (String)request.getAttribute("signupError");
+                if(errorMessage != null){
+            %>
+            <div class="alert alert-danger" role="alert" style="margin-top: 10px">
+                <%out.print(errorMessage);%>
+            </div>
+            <% }  %>
             <form action="Signup" method="post">
                 <div class="form-group">
                     <label for="name">Name: </label>
